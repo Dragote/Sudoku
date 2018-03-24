@@ -1,6 +1,5 @@
 package io.cyanlab.loinasd.sudoku.models
 
-import java.util.ArrayList
 import java.util.Arrays
 import java.util.Random
 import java.util.logging.Logger
@@ -18,7 +17,7 @@ class Table internal constructor() {
     private val NO_FORBIDDEN = -1
 
 
-    private val N = 66
+    private val N = 3
 
 
     private val fullPattern = arrayOf(
@@ -32,13 +31,137 @@ class Table internal constructor() {
             intArrayOf(6, 7, 8, 9, 1, 2, 3, 4, 5),
             intArrayOf(9, 1, 2, 3, 4, 5, 6, 7, 8))
 
+    private val sqGrid = arrayOf(intArrayOf(0, 1, 2), intArrayOf(9, 10, 11), intArrayOf(18, 19, 20))
+
     init {
         log.info(validTable(fullPattern).toString())
-        createTable(r)
-        printMatrix(table)
+        //createTable(r)
+        generate(r)
     }
 
-    private fun createTable(r: Random): Unit{//Array<IntArray> {
+    private fun generate(r: Random){
+        table = Array<IntArray>(9,{ i -> IntArray(9,{j -> 0}) })
+
+        var isOK = true
+
+        for (i in 0..6){
+            var count = 0
+            while (!fillSquare(i,r) && count < 100){count++}
+
+            if (count >= 100) {
+                isOK = false
+                break
+            }
+
+            printMatrix(table)
+        }
+
+        if (isOK) {
+            var isLastFilled = false
+
+            var count = 0
+            do {
+                while (!fillSquare(7,r) && count < 100){count++}
+                if (count < 100) {
+                    if (fillSquare(8,r))
+                        isLastFilled = true
+                    else
+                        clear7Sq()
+                }else {
+                    break
+                }
+            }while (!isLastFilled)
+
+            if (!isLastFilled) generate(r)
+
+            printMatrix(table)
+        }else generate(r)
+    }
+
+
+
+    private fun clear7Sq(){
+        for (i in 6..8)
+            for (j in 3..5)
+                table[i][j] = 0
+    }
+
+    private fun fillSquare(sqNumber: Int, r: Random): Boolean{
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        var square = BooleanArray(9, { i -> false })
+
+        var buffer = Array<IntArray>(3,{i -> IntArray(3, {j -> 0}) })
+
+        for (y in 0..2){
+            for (x in 0..2){
+
+                val row = getRow(y + offsetY)
+                val column = getColumn(x + offsetX)
+
+                var num : Int
+
+                var count = 0
+
+                for (i in 0..8) if (square[i] || row[i] || column[i]) count++
+
+                if (count == 9) return false
+
+                num = getNumber(BooleanArray(9, { i: Int -> square[i] || row[i] || column[i] }),r.nextInt(9))
+
+                square[num] = true
+
+                buffer[y][x] = num+1
+            }
+        }
+
+        for (y in 0..2)
+            for (x in 0..2){
+                table[y + offsetY][x + offsetX] = buffer[y][x]
+            }
+
+        return true
+    }
+
+    private fun getNumber(flags:BooleanArray, rand: Int): Int{
+        if (!flags[rand]) return rand
+
+        var number = 0
+        var counter = 0
+
+        do{
+            if (!flags[number]) counter++
+            number++
+            if (number == 9) {
+                number = 0
+            }
+        }while(counter != rand+1)
+
+        when (number != 0) {
+            true -> return --number
+            false -> return 8
+        }
+    }
+
+    private fun getRow(y: Int):BooleanArray{
+        val row = BooleanArray(9, { i -> false })
+
+        for (i in 0..8)
+            if (table[y][i] != 0) row[table[y][i]-1] = true
+        return row
+    }
+
+    private fun getColumn(x: Int):BooleanArray{
+        val column = BooleanArray(9, { i -> false })
+
+        for (i in 0..8)
+            if (table[i][x] != 0) column[table[i][x]-1] = true
+        return column
+    }
+
+
+    private fun createTable(r: Random){//:Array<IntArray> {
         table = Arrays.copyOf(fullPattern, 9)
 
         var count = 0
@@ -70,7 +193,7 @@ class Table internal constructor() {
         val bigIndex = r.nextInt(3)
         val x1 = r.nextInt(3)
         var x2 = r.nextInt(3)
-        if (x1 == x2) x2 + r.nextInt(2)+1
+        if (x1 == x2) x2 += r.nextInt(2)+1
         if (x2 >= 3) x2 = 0
         when (bound) {
             0 ->{
@@ -113,6 +236,7 @@ class Table internal constructor() {
         }
         printMatrix(matrix)
     }
+
 
     private fun swipeColumns(matrix: Array<IntArray>, bigColumn: Int, first: Int, second: Int) {
 
@@ -161,7 +285,7 @@ class Table internal constructor() {
     private fun swipeBigRows(matrix: Array<IntArray>, first: Int, second: Int) {
 
         val firstStart = first * 3
-        val secondStart = first * 3
+        val secondStart = second * 3
         var t: Int
         for (row in 0..2) {
             for (column in 0..8) {
