@@ -50,32 +50,29 @@ class Table internal constructor() {
 
     private fun randomize(matrix: Array<IntArray>, r: Random): Int {
         val bound = r.nextInt(4)
+        val bigIndex = r.nextInt(3)
+        var x1 = r.nextInt(3)
+        var x2 = r.nextInt(3)
+        if (x1 == x2) x2 + r.nextInt(2)+1
+        if (x2 >= 3) x2 = 0
         when (bound) {
             0 ->{
-                val x1 = r.nextInt(9)
-                val x2 = r.nextInt(9)
-                println("swipe ${x1} and ${x2} colums")
-                swipeColumns(matrix, x1, x2)
+                println("swipe ${x1} and ${x2} colums in %bigIndex big column")
+                swipeColumns(matrix,bigIndex, x1, x2)
                 return 0
             }
 
             1 -> {
-                val x1 = r.nextInt(9)
-                val x2 = r.nextInt(9)
-                println("swipe ${x1} and ${x2} rows")
-                swipeRows(matrix, x1, x2)
+                println("swipe ${x1} and ${x2} rows in %bigIndex big row")
+                swipeRows(matrix, bigIndex, x1, x2)
                 return 1
             }
             2 -> {
-                val x1 = r.nextInt(3)
-                val x2 = r.nextInt(3)
                 println("swipe ${x1} and ${x2} big columns")
                 swipeBigColumns(matrix, x1, x2)
                 return 2
             }
             3 -> {
-                val x1 = r.nextInt(3)
-                val x2 = r.nextInt(3)
                 println("swipe ${x1} and ${x2} big rows")
                 swipeBigRows(matrix, x1, x2)
                 return 3
@@ -100,22 +97,21 @@ class Table internal constructor() {
         printMatrix(matrix)
     }
 
-    private fun swipeColumns(matrix: Array<IntArray>, first: Int, second: Int) {
+    private fun swipeColumns(matrix: Array<IntArray>, bigColumn: Int, first: Int, second: Int) {
 
-        if (first == second) return
+        val x1 = first + bigColumn*3
+        val x2 = second + bigColumn*3
 
-        if (Math.abs(first - second) <= 2 && first / 3 == second / 3) {
-            var t: Int
-            for (i in matrix.indices) {
-                t = matrix[i][first]
-                matrix[i][first] = matrix[i][second]
-                matrix[i][second] = t
-            }
-            printMatrix(matrix)
+        var t: Int
+        for (i in matrix.indices) {
+            t = matrix[i][x1]
+            matrix[i][x1] = matrix[i][x2]
+            matrix[i][x2] = t
         }
+        printMatrix(matrix)
     }
 
-    private fun swipeRows(matrix: Array<IntArray>, first: Int, second: Int) {
+    private fun swipeRows(matrix: Array<IntArray>, bigRaw: Int, first: Int, second: Int) {
 
         if (first == second) return
 
