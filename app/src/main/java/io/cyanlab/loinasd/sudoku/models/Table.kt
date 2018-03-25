@@ -12,9 +12,10 @@ class Table internal constructor() {
     private val log: Logger = Logger.getLogger(Table::class.java.name)
     private val MAX_METHODS_COUNT = 3
     private val NO_FORBIDDEN = -1
+    private val MAX_TRIALS = intArrayOf(10, 20, 40, 50, 70, 100)
 
 
-    private val N = 3
+    private val N = 10000
 
 
     private val fullPattern = arrayOf(
@@ -28,29 +29,38 @@ class Table internal constructor() {
             intArrayOf(6, 7, 8, 9, 1, 2, 3, 4, 5),
             intArrayOf(9, 1, 2, 3, 4, 5, 6, 7, 8))
 
-    //private val sqGrid = arrayOf(intArrayOf(0, 1, 2), intArrayOf(9, 10, 11), intArrayOf(18, 19, 20))
-
     init {
         log.info(validTable(fullPattern).toString())
         //createTable(r)
-        generate(r)
+        for (j in MAX_TRIALS.indices){
+            var statistics = IntArray(N,{0})
+
+            var sum = 0
+            for (i in statistics.indices){
+                statistics[i] = generate(r, MAX_TRIALS[j])
+                sum += statistics[i]
+            }
+            println(sum / N)
+        }
+
+
     }
 
-    private fun generate(r: Random){
+    private fun generate(r: Random, maxTrials: Int): Int{
         table = Array<IntArray>(9,{ IntArray(9,{ j -> 0}) })
 
         var isOK = true
 
         for (i in 0..6){
             var count = 0
-            while (!fillSquare(i,r) && count < 100){count++}
+            while (!fillSquare(i,r) && count < maxTrials){count++}
 
-            if (count >= 100) {
+            if (count >= maxTrials) {
                 isOK = false
                 break
             }
 
-            printMatrix(table)
+            //printMatrix(table)
         }
 
         if (isOK) {
@@ -58,8 +68,8 @@ class Table internal constructor() {
 
             var count = 0
             do {
-                while (!fillSquare(7,r) && count < 100){count++}
-                if (count < 100) {
+                while (!fillSquare(7,r) && count < maxTrials){count++}
+                if (count < maxTrials) {
                     if (fillSquare(8,r))
                         isLastFilled = true
                     else
@@ -69,10 +79,14 @@ class Table internal constructor() {
                 }
             }while (!isLastFilled)
 
-            if (!isLastFilled) generate(r)
+            if (!isLastFilled)
+                return 1 + generate(r, maxTrials)
+            else {
+                //printMatrix(table)
+                return 1
+            }
 
-            printMatrix(table)
-        }else generate(r)
+        }else return 1 + generate(r, maxTrials)
     }
 
 
@@ -91,21 +105,26 @@ class Table internal constructor() {
 
         val buffer = Array(3,{ IntArray(3, { 0}) })
 
-        for (y in 0..2){
-            for (x in 0..2){
 
-                val row = getRow(y + offsetY)
-                val column = getColumn(x + offsetX)
+        val columns = Array<BooleanArray>(3, {BooleanArray(9, {false})})
+
+        for (x in offsetX..offsetX+2){
+            columns[x-offsetX] = getColumn(x)
+        }
+
+        for (y in 0..2){
+            val row = getRow(y + offsetY)
+            for (x in 0..2){
 
                 var num : Int
 
                 var count = 0
 
-                for (i in 0..8) if (square[i] || row[i] || column[i]) count++
+                for (i in 0..8) if (square[i] || row[i] || columns[x][i]) count++
 
                 if (count == 9) return false
 
-                num = getNumber(BooleanArray(9, { i: Int -> square[i] || row[i] || column[i] }),r.nextInt(9))
+                num = getNumber(BooleanArray(9, { i: Int -> square[i] || row[i] || columns[x][i] }),r.nextInt(9))
 
                 square[num] = true
 
