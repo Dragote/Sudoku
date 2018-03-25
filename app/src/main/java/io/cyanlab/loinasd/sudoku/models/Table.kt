@@ -4,15 +4,12 @@ import java.util.Arrays
 import java.util.Random
 import java.util.logging.Logger
 
-/**
- * Created by Lev on 19.03.2018.
- */
 
 class Table internal constructor() {
 
     private lateinit var table: Array<IntArray>
     private val r: Random = Random()
-    val log: Logger = Logger.getLogger(Table::class.java.name)
+    private val log: Logger = Logger.getLogger(Table::class.java.name)
     private val MAX_METHODS_COUNT = 3
     private val NO_FORBIDDEN = -1
 
@@ -31,7 +28,7 @@ class Table internal constructor() {
             intArrayOf(6, 7, 8, 9, 1, 2, 3, 4, 5),
             intArrayOf(9, 1, 2, 3, 4, 5, 6, 7, 8))
 
-    private val sqGrid = arrayOf(intArrayOf(0, 1, 2), intArrayOf(9, 10, 11), intArrayOf(18, 19, 20))
+    //private val sqGrid = arrayOf(intArrayOf(0, 1, 2), intArrayOf(9, 10, 11), intArrayOf(18, 19, 20))
 
     init {
         log.info(validTable(fullPattern).toString())
@@ -40,7 +37,7 @@ class Table internal constructor() {
     }
 
     private fun generate(r: Random){
-        table = Array<IntArray>(9,{ i -> IntArray(9,{j -> 0}) })
+        table = Array<IntArray>(9,{ IntArray(9,{ j -> 0}) })
 
         var isOK = true
 
@@ -90,9 +87,9 @@ class Table internal constructor() {
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
 
-        var square = BooleanArray(9, { i -> false })
+        val square = BooleanArray(9, { false })
 
-        var buffer = Array<IntArray>(3,{i -> IntArray(3, {j -> 0}) })
+        val buffer = Array(3,{ IntArray(3, { 0}) })
 
         for (y in 0..2){
             for (x in 0..2){
@@ -138,14 +135,14 @@ class Table internal constructor() {
             }
         }while(counter != rand+1)
 
-        when (number != 0) {
-            true -> return --number
-            false -> return 8
+        return when (number != 0) {
+            true -> --number
+            false -> 8
         }
     }
 
     private fun getRow(y: Int):BooleanArray{
-        val row = BooleanArray(9, { i -> false })
+        val row = BooleanArray(9, { false })
 
         for (i in 0..8)
             if (table[y][i] != 0) row[table[y][i]-1] = true
@@ -153,7 +150,7 @@ class Table internal constructor() {
     }
 
     private fun getColumn(x: Int):BooleanArray{
-        val column = BooleanArray(9, { i -> false })
+        val column = BooleanArray(9, { false })
 
         for (i in 0..8)
             if (table[i][x] != 0) column[table[i][x]-1] = true
@@ -167,7 +164,7 @@ class Table internal constructor() {
         var count = 0
         var curBound = 0
         for (i in 1 until N) {
-            var bound = randomize(table, r, NO_FORBIDDEN)
+            val bound = randomize(table, r, NO_FORBIDDEN)
 
             if (curBound == bound) count++
 
@@ -197,25 +194,30 @@ class Table internal constructor() {
         if (x2 >= 3) x2 = 0
         when (bound) {
             0 ->{
-                println("swipe ${x1} and ${x2} colums in $bigIndex big column")
+                println("swipe $x1 and $x2 columns in $bigIndex big column")
                 swipeColumns(matrix,bigIndex, x1, x2)
                 return 0
             }
 
             1 -> {
-                println("swipe ${x1} and ${x2} rows in $bigIndex big row")
+                println("swipe $x1 and $x2 rows in $bigIndex big row")
                 swipeRows(matrix, bigIndex, x1, x2)
                 return 1
             }
             2 -> {
-                println("swipe ${x1} and ${x2} big columns")
+                println("swipe $x1 and $x2 big columns")
                 swipeBigColumns(matrix, x1, x2)
                 return 2
             }
             3 -> {
-                println("swipe ${x1} and ${x2} big rows")
+                println("swipe $x1 and $x2 big rows")
                 swipeBigRows(matrix, x1, x2)
                 return 3
+            }
+            4 -> {
+                println("transposition")
+                t(matrix)
+                return 4
             }
         }
         return bound
@@ -308,9 +310,9 @@ class Table internal constructor() {
         println("______________________")
     }
 
-    fun validTable(matrix: Array<IntArray>): Boolean {
+    private fun validTable(matrix: Array<IntArray>): Boolean {
 
-        val c1 = false;
+        /*val c1 = false;
         val r1 = false
         val c2 = false;
         val r2 = false
@@ -331,7 +333,7 @@ class Table internal constructor() {
 
         var c = booleanArrayOf(false, false, false, false, false, false, false, false, false)
         var r = booleanArrayOf(false, false, false, false, false, false, false, false, false)
-
+*/
 
 /*            for (row in matrix){
                 if (r[row[0]])
