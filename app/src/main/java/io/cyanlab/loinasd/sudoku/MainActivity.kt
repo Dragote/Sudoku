@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import io.cyanlab.loinasd.sudoku.models.Table
+import io.cyanlab.loinasd.sudoku.models.TablePlusDiagonals
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +19,10 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         Table()
+
+        TablePlusDiagonals()
+
+
 
 
     }

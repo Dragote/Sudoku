@@ -5,14 +5,15 @@ import java.util.Random
 import java.util.logging.Logger
 
 
-class Table internal constructor() {
+open class Table internal constructor() {
 
-    private lateinit var table: Array<IntArray>
-    private val r: Random = Random()
-    private val log: Logger = Logger.getLogger(Table::class.java.name)
-    private val MAX_METHODS_COUNT = 3
-    private val NO_FORBIDDEN = -1
-    private val MAX_TRIALS = intArrayOf(10, 20, 40, 50, 70, 100)
+    protected open lateinit var table: Array<IntArray>
+    protected open val r: Random = Random()
+    protected open val log: Logger = Logger.getLogger(Table::class.java.name)
+    protected open val MAX_METHODS_COUNT = 3
+    protected open val NO_FORBIDDEN = -1
+    protected open val MAX_TRIALS = 70
+    protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
 
 
     private val N = 10000
@@ -30,32 +31,24 @@ class Table internal constructor() {
             intArrayOf(9, 1, 2, 3, 4, 5, 6, 7, 8))
 
     init {
-        log.info(validTable(fullPattern).toString())
+        //.info(validTable(fullPattern).toString())
         //createTable(r)
-        for (j in MAX_TRIALS.indices){
-            var statistics = IntArray(N,{0})
+        while(!generate()){}
 
-            var sum = 0
-            for (i in statistics.indices){
-                statistics[i] = generate(r, MAX_TRIALS[j])
-                sum += statistics[i]
-            }
-            println(sum / N)
-        }
-
+        printMatrix(table)
 
     }
 
-    private fun generate(r: Random, maxTrials: Int): Int{
+    protected open fun generate(): Boolean{
         table = Array<IntArray>(9,{ IntArray(9,{ j -> 0}) })
 
         var isOK = true
 
         for (i in 0..6){
             var count = 0
-            while (!fillSquare(i,r) && count < maxTrials){count++}
+            while (!fillSquare(i,r) && count < MAX_TRIALS){count++}
 
-            if (count >= maxTrials) {
+            if (count >= MAX_TRIALS) {
                 isOK = false
                 break
             }
@@ -68,36 +61,35 @@ class Table internal constructor() {
 
             var count = 0
             do {
-                while (!fillSquare(7,r) && count < maxTrials){count++}
-                if (count < maxTrials) {
+                while (!fillSquare(7,r) && count < MAX_TRIALS_FOR_LAST_SQUARE){count++}
+                if (count < MAX_TRIALS_FOR_LAST_SQUARE) {
                     if (fillSquare(8,r))
                         isLastFilled = true
                     else
-                        clear7Sq()
+                        clearSq(7)
                 }else {
                     break
                 }
             }while (!isLastFilled)
 
-            if (!isLastFilled)
-                return 1 + generate(r, maxTrials)
-            else {
-                //printMatrix(table)
-                return 1
-            }
+            return isLastFilled
 
-        }else return 1 + generate(r, maxTrials)
+        }else return false
     }
 
 
 
-    private fun clear7Sq(){
-        for (i in 6..8)
-            for (j in 3..5)
+    protected open fun clearSq(sqNumber: Int){
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        for (i in offsetY..offsetY+2)
+            for (j in offsetX..offsetX+2)
                 table[i][j] = 0
     }
 
-    private fun fillSquare(sqNumber: Int, r: Random): Boolean{
+    protected open fun fillSquare(sqNumber: Int, r: Random): Boolean{
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
 
@@ -112,23 +104,15 @@ class Table internal constructor() {
             columns[x-offsetX] = getColumn(x)
         }
 
+        val rows = Array<BooleanArray>(3, {BooleanArray(9, {false})})
+
+        for (y in offsetY..offsetY+2){
+            rows[y-offsetY] = getRow(y)
+        }
+
         for (y in 0..2){
-            val row = getRow(y + offsetY)
             for (x in 0..2){
-
-                var num : Int
-
-                var count = 0
-
-                for (i in 0..8) if (square[i] || row[i] || columns[x][i]) count++
-
-                if (count == 9) return false
-
-                num = getNumber(BooleanArray(9, { i: Int -> square[i] || row[i] || columns[x][i] }),r.nextInt(9))
-
-                square[num] = true
-
-                buffer[y][x] = num+1
+                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y][i] || columns[x][i]}), square)) return false
             }
         }
 
@@ -140,7 +124,27 @@ class Table internal constructor() {
         return true
     }
 
-    private fun getNumber(flags:BooleanArray, rand: Int): Int{
+
+    protected open fun fillCell(y: Int, x: Int, buffer: Array<IntArray>,  flags: BooleanArray, square: BooleanArray): Boolean{
+        val num : Int
+
+        var count = 0
+
+        for (i in 0..8) if (flags[i]) count++
+
+        if (count == 9) return false
+
+        num = getNumber(flags ,r.nextInt(9))
+
+        square[num] = true
+
+        buffer[y][x] = num + 1
+
+        return true
+    }
+
+
+    protected open fun getNumber(flags:BooleanArray, rand: Int): Int{
         if (!flags[rand]) return rand
 
         var number = 0
@@ -160,7 +164,7 @@ class Table internal constructor() {
         }
     }
 
-    private fun getRow(y: Int):BooleanArray{
+    protected open fun getRow(y: Int):BooleanArray{
         val row = BooleanArray(9, { false })
 
         for (i in 0..8)
@@ -168,7 +172,7 @@ class Table internal constructor() {
         return row
     }
 
-    private fun getColumn(x: Int):BooleanArray{
+    protected open fun getColumn(x: Int):BooleanArray{
         val column = BooleanArray(9, { false })
 
         for (i in 0..8)
@@ -176,8 +180,7 @@ class Table internal constructor() {
         return column
     }
 
-
-    private fun createTable(r: Random){//:Array<IntArray> {
+    protected open fun createTable(r: Random){//:Array<IntArray> {
         table = Arrays.copyOf(fullPattern, 9)
 
         var count = 0
@@ -318,7 +321,7 @@ class Table internal constructor() {
         printMatrix(matrix)
     }
 
-    private fun printMatrix(matrix: Array<IntArray>) {
+    open fun printMatrix(matrix: Array<IntArray>) {
         println("############################")
         for (row in matrix) {
             for (n in row) {
