@@ -7,12 +7,12 @@ import java.util.logging.Logger
 
 open class Table internal constructor() {
 
-    protected open lateinit var table: Array<IntArray>
+    open lateinit var table: Array<IntArray>
     protected open val r: Random = Random()
     protected open val log: Logger = Logger.getLogger(Table::class.java.name)
     protected open val MAX_METHODS_COUNT = 3
     protected open val NO_FORBIDDEN = -1
-    protected open val MAX_TRIALS = 70
+    protected open val MAX_TRIALS = 100
     protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
 
 
@@ -33,20 +33,24 @@ open class Table internal constructor() {
     init {
         //.info(validTable(fullPattern).toString())
         //createTable(r)
-        while(!generate()){}
+    }
 
+    fun createTable(){
+        while(!generate()){System.gc()}
+        System.gc()
         printMatrix(table)
-
     }
 
     protected open fun generate(): Boolean{
-        table = Array<IntArray>(9,{ IntArray(9,{ j -> 0}) })
+        table = Array(9,{ IntArray(9,{ j -> 0}) })
 
         var isOK = true
 
         for (i in 0..6){
             var count = 0
-            while (!fillSquare(i,r) && count < MAX_TRIALS){count++}
+            while (!fillSquare(i,r) && count < MAX_TRIALS){
+                System.gc()
+                count++}
 
             if (count >= MAX_TRIALS) {
                 isOK = false
@@ -95,38 +99,46 @@ open class Table internal constructor() {
 
         val square = BooleanArray(9, { false })
 
-        val buffer = Array(3,{ IntArray(3, { 0}) })
+        val buffer = Array(3,{ IntArray(3, {0}) })
 
 
-        val columns = Array<BooleanArray>(3, {BooleanArray(9, {false})})
+        val columns = Array(3, {BooleanArray(9, {false})})
 
         for (x in offsetX..offsetX+2){
             columns[x-offsetX] = getColumn(x)
         }
 
-        val rows = Array<BooleanArray>(3, {BooleanArray(9, {false})})
+        val rows = Array(3, {BooleanArray(9, {false})})
 
         for (y in offsetY..offsetY+2){
             rows[y-offsetY] = getRow(y)
         }
 
-        for (y in 0..2){
-            for (x in 0..2){
-                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y][i] || columns[x][i]}), square)) return false
-            }
-        }
+        if (!fillBuffer(buffer, square, rows, columns, sqNumber)) return false
 
-        for (y in 0..2)
-            for (x in 0..2){
-                table[y + offsetY][x + offsetX] = buffer[y][x]
-            }
+        pushBuffer(buffer, offsetY, offsetX, sqNumber)
 
         return true
     }
 
 
+    protected open fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, rows: Array<BooleanArray>, columns: Array<BooleanArray>, sqNumber: Int): Boolean{
+        for (y in 0 until 3){
+            for (x in 0 until 3){
+                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y][i] || columns[x][i]}), square)) return false
+            }
+        }
+        return true
+    }
+
+    protected open fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int){
+        for (y in 0..2)
+            for (x in 0..2){
+                table[y + offsetY][x + offsetX] = buffer[y][x]
+            }
+    }
+
     protected open fun fillCell(y: Int, x: Int, buffer: Array<IntArray>,  flags: BooleanArray, square: BooleanArray): Boolean{
-        val num : Int
 
         var count = 0
 
@@ -134,7 +146,7 @@ open class Table internal constructor() {
 
         if (count == 9) return false
 
-        num = getNumber(flags ,r.nextInt(9))
+        val num = getNumber(flags ,r.nextInt(9))
 
         square[num] = true
 

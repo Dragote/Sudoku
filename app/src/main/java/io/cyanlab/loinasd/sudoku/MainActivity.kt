@@ -5,8 +5,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
-import io.cyanlab.loinasd.sudoku.models.Table
-import io.cyanlab.loinasd.sudoku.models.TablePlusDiagonals
+import io.cyanlab.loinasd.sudoku.models.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,11 +17,15 @@ class MainActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
 
-        Table()
+        Table().createTable()
 
-        TablePlusDiagonals()
+        TablePlusDiagonals().createTable()
 
+        AsteriskTable().createTable()
 
+        GirandolaTable().createTable()
+
+        CenterDotTable().createTable()
 
 
     }
