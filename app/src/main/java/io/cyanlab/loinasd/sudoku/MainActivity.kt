@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         Table().createTable()
 
-        TablePlusDiagonals().createTable()
+        /*TablePlusDiagonals().createTable()
 
         AsteriskTable().createTable()
 
@@ -28,5 +28,6 @@ class MainActivity : AppCompatActivity() {
         CenterDotTable().createTable()
 
 
+        WindokuTable().createTable()*/
     }
 }

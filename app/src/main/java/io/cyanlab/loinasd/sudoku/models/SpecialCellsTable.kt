@@ -16,18 +16,21 @@ abstract class SpecialCellsTable: Table() {
         return super.generate()
     }
 
-    override fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, rows: Array<BooleanArray>, columns: Array<BooleanArray>, sqNumber: Int): Boolean {
+    override fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, sqNumber: Int): Boolean {
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
 
         val specY = specialCellsCoords[sqNumber][0]
         val specX = specialCellsCoords[sqNumber][1]
 
-        if (!fillCell(specY, specX, buffer, BooleanArray(9, { i: Int -> square[i] || rows[specY][i] || columns[specX][i] || specialCells[i]
+        if (!fillCell(specY, specX, buffer, BooleanArray(9, { i: Int -> square[i] || rows[specY+ offsetY][i] || columns[specX+ offsetX][i] || specialCells[i]
                 }), square)) return false
 
         for (y in 0..2){
             for (x in 0..2){
                 if (x != specX || y != specY) {
-                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y][i] || columns[x][i]
+                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y + offsetY][i] || columns[x + offsetX][i]
                                     || if (y == specialCellsCoords[sqNumber][0] && x == specialCellsCoords[sqNumber][1]) specialCells[i] else false
                             }), square)) return false
                 }
@@ -41,10 +44,13 @@ abstract class SpecialCellsTable: Table() {
         val specY = specialCellsCoords[sqNumber][0]
         val specX = specialCellsCoords[sqNumber][1]
 
+        specialCells[buffer[specY][specX] - 1] = true
+
         for (y in 0..2)
             for (x in 0..2){
                 table[y + offsetY][x + offsetX] = buffer[y][x]
-                specialCells[buffer[specY][specX] - 1] = true
+                rows[y+offsetY][buffer[y][x] - 1] = true
+                columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 

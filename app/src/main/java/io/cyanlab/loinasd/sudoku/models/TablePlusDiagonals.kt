@@ -39,6 +39,9 @@ class TablePlusDiagonals: Table() {
 
         table = Array(9,{ IntArray(9,{0}) })
 
+        rows = Array(9, {i -> BooleanArray(9, {false})})
+        columns = Array(9, {i -> BooleanArray(9, {false})})
+
         primeDiagonal = BooleanArray(9, {false})
         
         secondDiagonal = BooleanArray(9, {false})
@@ -81,7 +84,10 @@ class TablePlusDiagonals: Table() {
         }else return false
     }
 
-    override fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, rows: Array<BooleanArray>, columns: Array<BooleanArray>, sqNumber: Int): Boolean {
+    override fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, sqNumber: Int): Boolean {
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
 
         val isPrime = PRIMARY_DIAGONAL_SQUARES.contains(sqNumber)
         val isSecond = SECONDARY_DIAGONAL_SQUARES.contains(sqNumber)
@@ -89,7 +95,7 @@ class TablePlusDiagonals: Table() {
         for (i in 0..8){
             val y = if (!isSecond) prim[i][0] else second[i][0]
             val x = if (!isSecond) prim[i][1] else second[i][1]
-            if (!fillCell(y, x, buffer, BooleanArray(9, { j: Int -> square[j] || rows[y][j] || columns[x][j]
+            if (!fillCell(y, x, buffer, BooleanArray(9, { j: Int -> square[j] || rows[y + offsetY][j] || columns[x+ offsetX][j]
                             || if (isPrime && y == x) primeDiagonal[j] else false
                             || if (isSecond && y == 2 - x) secondDiagonal[j] else false
                     }), square)) return false
@@ -108,6 +114,8 @@ class TablePlusDiagonals: Table() {
                 table[y + offsetY][x + offsetX] = buffer[y][x]
                 if (y == x && isPrime) primeDiagonal[buffer[y][x] - 1] = true
                 if (y == 2-x && isSecond) secondDiagonal[buffer[y][x] - 1] = true
+                rows[y+offsetY][buffer[y][x] - 1] = true
+                columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 
