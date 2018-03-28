@@ -5,7 +5,7 @@ package io.cyanlab.loinasd.sudoku.models
  */
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import io.cyanlab.loinasd.sudoku.GameView
+import io.cyanlab.loinasd.sudoku.view.GameView
 
 class Player//конструктор
 (

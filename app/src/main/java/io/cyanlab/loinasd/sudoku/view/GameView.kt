@@ -1,4 +1,4 @@
-package io.cyanlab.loinasd.sudoku
+package io.cyanlab.loinasd.sudoku.view
 
 import android.content.Context
 import android.graphics.Canvas
