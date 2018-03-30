@@ -1,16 +1,15 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
 import io.cyanlab.loinasd.sudoku.view.IOut
-import java.util.Arrays
 import java.util.Random
 import java.util.logging.Logger
 
 
-open class Table internal constructor(protected open val out: IOut) {
+open class TableGenerator internal constructor(protected open val out: IOut) {
 
     open lateinit var completeTable: Array<IntArray>
     protected open val r: Random = Random()
-    protected open val log: Logger = Logger.getLogger(Table::class.java.name)
+
     protected open val MAX_METHODS_COUNT = 3
     protected open val NO_FORBIDDEN = -1
     protected open val MAX_TRIALS = 20
@@ -28,6 +27,10 @@ open class Table internal constructor(protected open val out: IOut) {
     protected lateinit var columns: Array<BooleanArray>
     protected lateinit var rows: Array<BooleanArray>
     protected lateinit var squares: Array<BooleanArray>
+    protected lateinit var trials: BooleanArray
+
+    lateinit var stack : ArrayList<IntArray>
+    lateinit var trialStack : ArrayList<BooleanArray>
 
 
     private val fullPattern = arrayOf(
@@ -42,7 +45,7 @@ open class Table internal constructor(protected open val out: IOut) {
             intArrayOf(9, 1, 2, 3, 4, 5, 6, 7, 8))
 
     init{
-        //.info(validTable(fullPattern).toString())
+
         //createTable(r)
     }
 
@@ -234,64 +237,107 @@ open class Table internal constructor(protected open val out: IOut) {
         return square
     }
 
-
-    fun createGame(difficulty: Int){
-        var count = difficulty
+    protected fun prepareGameTable(){
 
         penTable = Array(9,{y -> IntArray(9,{x -> completeTable[y][x]})})
 
-        val sqNumber = r.nextInt(9)
+        squares = Array(9, {BooleanArray(9, {true})})
+        rows = Array(9, {BooleanArray(9, {true})})
+        columns = Array(9, {BooleanArray(9, {true})})
 
-        //clearSq(penTable, sqNumber)
+        trials = BooleanArray(81, {false})
 
-        var trials = BooleanArray(81, {false})
+        stack = ArrayList()
+        trialStack = ArrayList()
 
-        squares = Array(9, {i -> BooleanArray(9, {true})})
-        rows = Array(9, {i -> BooleanArray(9, {true})})
-        columns = Array(9, {i -> BooleanArray(9, {true})})
+    }
 
-        var isFullyTried : Boolean
+    protected fun returnOneStep(){
+        println("stackback")
+        val y = stack[stack.lastIndex][0]
+        val x = stack[stack.lastIndex][1]
+        val number = stack[stack.lastIndex][2]
+
+        trials = trialStack[trialStack.lastIndex]
+        trials[y*9 + x] = true
+
+        penTable[y][x] = number
+
+        rows[y][number - 1] = true
+        columns[x][number - 1] = true
+        squares[(y / 3)* 3 + x / 3][number - 1] = true
+
+        stack.removeAt(stack.lastIndex)
+        trialStack.removeAt(trialStack.lastIndex)
+    }
+
+    protected fun nullCell(y: Int, x: Int){
+        pointerNumber = penTable[y][x]
+
+        rows[y][pointerNumber - 1] = false
+        columns[x][pointerNumber - 1] = false
+        squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = false
+
+        penTable[y][x] = 0
+
+        pointerY = y
+        pointerX = x
+
+        trials[y*9 + x] = true
+    }
+
+    protected fun restoreCell(y: Int, x: Int){
+        penTable[y][x] = pointerNumber
+
+        rows[y][pointerNumber - 1] = true
+        columns[x][pointerNumber - 1] = true
+        squares[(y / 3)* 3 + x / 3][pointerNumber - 1] = true
+    }
+
+    protected fun putCellIntoStack(y: Int, x: Int){
+        stack.add(intArrayOf(y, x, pointerNumber))
+        trialStack.add(BooleanArray(81, { i -> trials[i] }))
+    }
+
+    fun createGame(difficulty: Int){
+
+        var count = difficulty
 
         var trialCount = 0
 
-        var stack = ArrayList<IntArray>()
-        var trialStack = ArrayList<BooleanArray>()
+        prepareGameTable()
 
-        var isStackError = false
-
-        while (count > 1){
+        while (count > 0){
             var x: Int
             var y: Int
 
             var counter = 0
 
             for (cell in trials)
-                if (!cell) {
-                    counter++
-                }
+                if (!cell) counter++
 
-            if (counter < count){
+            while (counter < count){
 
-                println("stackback")
+                trialCount++
 
                 count++
 
-                y = stack[stack.lastIndex][0]
-                x = stack[stack.lastIndex][1]
-                val number = stack[stack.lastIndex][2]
+                returnOneStep()
 
-                penTable[y][x] = number
-                trials = BooleanArray(81, {i -> if (i != y * 9 + x) trialStack[trialStack.lastIndex][i] else true})
+                counter = 0
 
-                rows[y][number - 1] = true
-                columns[x][number - 1] = true
-                squares[(y / 3)* 3 + x / 3][number - 1] = true
+                for (cell in trials)
+                    if (!cell) counter++
 
-                stack.removeAt(stack.lastIndex)
+                if (trialCount > 4){
+
+                    count = difficulty
+                    trialCount = 0
+
+                    prepareGameTable()
+                }
 
             }
-
-
 
 
             val number = getNumber(trials, r.nextInt(81))
@@ -299,38 +345,27 @@ open class Table internal constructor(protected open val out: IOut) {
             x = number % 9
             y = number / 9
 
-            val buffer = penTable[y][x]
+            nullCell(y, x)
 
-            rows[y][buffer - 1] = false
-            columns[x][buffer - 1] = false
-            squares[(y / 3) * 3 + x / 3][buffer - 1] = false
-
-            penTable[y][x] = 0
-
-            pointerY = y
-            pointerX = x
-            pointerNumber = buffer
-
-            if ((count < 30 || count % 4 == 0) && findFirst(penTable) != 0){
-                penTable[y][x] = buffer
-
-                rows[y][buffer - 1] = true
-                columns[x][buffer - 1] = true
-                squares[(y / 3)* 3 + x / 3][buffer - 1] = true
+            if ((count < 20 || count % 3 == 0) && findFirst(penTable) != 0){
+                restoreCell(y, x)
             }
             else {
                 count--
-                stack.add(intArrayOf(y, x, buffer))
-                trialStack.add(BooleanArray(81, { i -> trials[i] }))
+                putCellIntoStack(y, x)
             }
 
-            trials[number] = true
-
         }
-        out.printGameTable(this)
-        //out("********************* ${findFirst(table = Arrays.copyOf(penTable, 9 ))}")
 
-        //printMatrixAsLine(penTable)
+        out.printGameTable(this)
+    }
+
+    private fun printMatrixAsLine(table: Array<IntArray>) {
+        for (row in table) {
+            for (n in row) {
+                print( if (n == 0) "0" else n.toString())
+            }
+        }
     }
 
     var pointerY = 0

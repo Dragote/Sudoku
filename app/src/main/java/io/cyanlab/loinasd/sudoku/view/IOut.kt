@@ -2,13 +2,13 @@ package io.cyanlab.loinasd.sudoku.view
 
 
 import io.cyanlab.loinasd.sudoku.models.Cell
-import io.cyanlab.loinasd.sudoku.models.games.Table
+import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
 
 interface IOut {
 
-    fun printCompleteTable(table: Table)
+    fun printCompleteTable(table: TableGenerator)
 
-    fun printGameTable(table: Table)
+    fun printGameTable(table: TableGenerator)
 
     fun chosen(cell: Cell)
 

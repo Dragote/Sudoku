@@ -5,7 +5,7 @@ import io.cyanlab.loinasd.sudoku.view.IOut
 /**
  * Created by Анатолий on 27.03.2018.
  */
-abstract class SpecialAreasTable(out: IOut): Table(out) {
+abstract class SpecialAreasTG(out: IOut): TableGenerator(out) {
 
     protected abstract val specialAreasCoords : Array<ArrayList<IntArray>>
 

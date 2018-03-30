@@ -5,7 +5,7 @@ import io.cyanlab.loinasd.sudoku.view.IOut
 /**
  * Created by Анатолий on 26.03.2018.
  */
-abstract class SpecialCellsTable(out: IOut): Table(out) {
+abstract class SpecialCellsTG(out: IOut): TableGenerator(out) {
 
     abstract val specialCellsCoords : Array<IntArray>
 

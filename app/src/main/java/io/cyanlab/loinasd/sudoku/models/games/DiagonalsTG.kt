@@ -5,7 +5,7 @@ import io.cyanlab.loinasd.sudoku.view.IOut
 /**
  * Created by Анатолий on 26.03.2018.
  */
-class TablePlusDiagonals(out: IOut): Table(out) {
+class DiagonalsTG(out: IOut): TableGenerator(out) {
 
     private val PRIMARY_DIAGONAL_SQUARES = intArrayOf(0, 4, 8)
     private val SECONDARY_DIAGONAL_SQUARES = intArrayOf(2, 4, 6)
