@@ -5,7 +5,11 @@ import io.cyanlab.loinasd.sudoku.view.IOut
 /**
  * Created by Анатолий on 26.03.2018.
  */
+
+@Deprecated(message = "DGTG works much faster and uses less memory")
 class DiagonalsTG(out: IOut): TableGenerator(out) {
+
+
 
     private val PRIMARY_DIAGONAL_SQUARES = intArrayOf(0, 4, 8)
     private val SECONDARY_DIAGONAL_SQUARES = intArrayOf(2, 4, 6)
@@ -71,7 +75,7 @@ class DiagonalsTG(out: IOut): TableGenerator(out) {
                     if (fillSquare(5,r))
                         isLastFilled = true
                     else
-                        clearSq(completeTable, 3)
+                        clearSquare(3)
                 }else {
                     break
                 }

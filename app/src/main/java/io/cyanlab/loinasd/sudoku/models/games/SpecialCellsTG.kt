@@ -54,6 +54,82 @@ abstract class SpecialCellsTG(out: IOut): TableGenerator(out) {
             }
     }
 
+    override fun startFromBeginning() {
+        super.startFromBeginning()
+
+        specialCells = BooleanArray(9, {true})
+    }
+
+    override fun nullCell(y: Int, x: Int) {
+        super.nullCell(y, x)
+
+        val sqNumber = (y / 3) * 3 + x / 3
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        if (y - offsetY == specialCellsCoords[sqNumber][0] && x - offsetX == specialCellsCoords[sqNumber][1]){
+            specialCells[pointerNumber - 1] = false
+        }
+    }
+
+    override fun restoreCell(y: Int, x: Int) {
+        super.restoreCell(y, x)
+
+        val sqNumber = (y / 3) * 3 + x / 3
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        if (y - offsetY == specialCellsCoords[sqNumber][0] && x - offsetX == specialCellsCoords[sqNumber][1]){
+            specialCells[pointerNumber - 1] = true
+        }
+
+    }
+
+    override fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
+        val flags = super.getPossibleNumbers(y, x)
+
+        val sqNumber = (y / 3) * 3 + x / 3
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        if (y - offsetY == specialCellsCoords[sqNumber][0] && x - offsetX == specialCellsCoords[sqNumber][1]){
+            for (i in 0 until flags.size){
+                flags[i] = flags[i] || specialCells[i]
+            }
+        }
+
+        return flags
+    }
+
+    override fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+        super.fakeCell(table, y, x, number)
+
+        val sqNumber = (y / 3) * 3 + x / 3
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        if (y - offsetY == specialCellsCoords[sqNumber][0] && x - offsetX == specialCellsCoords[sqNumber][1]){
+            specialCells[number] = true
+        }
+
+    }
+
+    override fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+        super.reFakeCell(table, y, x, number)
+
+        val sqNumber = (y / 3) * 3 + x / 3
+
+        val offsetX = sqNumber % 3 * 3
+        val offsetY = sqNumber / 3 * 3
+
+        if (y - offsetY == specialCellsCoords[sqNumber][0] && x - offsetX == specialCellsCoords[sqNumber][1]){
+            specialCells[number] = false
+        }
+    }
 
 
 }

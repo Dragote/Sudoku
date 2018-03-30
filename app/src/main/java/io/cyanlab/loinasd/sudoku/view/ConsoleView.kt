@@ -6,26 +6,24 @@ import java.util.logging.Logger
 
 class ConsoleView: IOut {
 
-    protected open val log: Logger = Logger.getLogger(TableGenerator::class.java.name)
+    protected val log: Logger = Logger.getLogger(TableGenerator::class.java.name)
 
     override fun printGameTable(table: TableGenerator) {
-        println("############################")
         for (row in table.penTable) {
             for (n in row) {
                 print(n.toString())
             }
         }
-        println("______________________")
+        println()
     }
 
     override fun printCompleteTable(table: TableGenerator) {
-        println("############################")
         for (row in table.completeTable) {
             for (n in row) {
-                log.info(n.toString())
+                print(n.toString())
             }
         }
-        println("______________________")
+        println()
     }
 
     override fun chosen(cell: Cell) {

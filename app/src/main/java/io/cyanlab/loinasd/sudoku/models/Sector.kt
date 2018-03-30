@@ -1,4 +1,9 @@
 package io.cyanlab.loinasd.sudoku.models
 
-class Sector {
+open class Sector{
+
+    var cells : Array<Cell>? = null
+        set(value){
+            cells = value
+        }
 }

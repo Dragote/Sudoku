@@ -11,8 +11,20 @@ abstract class SpecialAreasTG(out: IOut): TableGenerator(out) {
 
     protected open lateinit var specialAreas : Array<BooleanArray>
 
+    protected lateinit var specialAreas4Cells:  Array<Array<BooleanArray>>
+
+    override val DIFFICULTY_HARD = 81 - 20
+
     override fun generate(): Boolean {
-        specialAreas = Array<BooleanArray>(specialAreasCoords.size, {BooleanArray(9, {false})})
+
+        specialAreas4Cells = Array(9,{ Array(9, { BooleanArray(specialAreasCoords.size, {false}) }) })
+        for (area in 0 until specialAreasCoords.size){
+            for (cell in 0 until specialAreasCoords[area].size){
+                specialAreas4Cells [specialAreasCoords[area][cell][0]] [specialAreasCoords[area][cell][1]][area] = true
+            }
+        }
+
+        specialAreas = Array(specialAreasCoords.size, {BooleanArray(9, {false})})
         return super.generate()
     }
 
@@ -22,19 +34,7 @@ abstract class SpecialAreasTG(out: IOut): TableGenerator(out) {
 
         for (y in 0 until 3){
             for (x in 0 until 3){
-                var isInArea = false
-                val areas = BooleanArray(specialAreas.size,{false})
-                for (area in specialAreasCoords){
-                    for (cell in area){
-                        if (y + offsetY == cell[0] && x + offsetX == cell[1]){
-                            areas[specialAreasCoords.indexOf(area)] = true
-                            isInArea = true
-                        }
-                    }
-                }
-                if (isInArea){
-                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y+ offsetY][i] || columns[x + offsetX][i] || getAreas(areas, i)}), square)) return false
-                }
+                if (specialAreas4Cells[y + offsetY][x + offsetX].contains(true) && !fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y+ offsetY][i] || columns[x + offsetX][i] || getAreas(specialAreas4Cells[y + offsetY][x + offsetX], i)}), square)) return false
             }
         }
 
@@ -61,21 +61,80 @@ abstract class SpecialAreasTG(out: IOut): TableGenerator(out) {
     override fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int) {
         for (y in 0..2)
             for (x in 0..2){
-                val areas = BooleanArray(specialAreas.size,{false})
-                for (area in specialAreasCoords){
-                    for (cell in area){
-                        if (y + offsetY == cell[0] && x + offsetX == cell[1]){
-                            areas[specialAreasCoords.indexOf(area)] = true
-                        }
-                    }
-                }
-                for (i in areas.indices){
-                    if (areas[i]) specialAreas[i][buffer[y][x] - 1] = true
+                for (i in specialAreas4Cells[y + offsetY][x + offsetX].indices){
+                    if (specialAreas4Cells[y + offsetY][x + offsetX][i]) specialAreas[i][buffer[y][x] - 1] = true
                 }
                 completeTable[y + offsetY][x + offsetX] = buffer[y][x]
                 rows[y+offsetY][buffer[y][x] - 1] = true
                 columns[x+offsetX][buffer[y][x] - 1] = true
             }
+    }
+
+    override fun startFromBeginning() {
+        super.startFromBeginning()
+        specialAreas = Array(specialAreasCoords.size, {BooleanArray(9, {true})})
+    }
+
+    override fun nullCell(y: Int, x: Int) {
+        super.nullCell(y, x)
+
+        for (areaNum in specialAreas4Cells[y][x].indices){
+            if (specialAreas4Cells[y][x][areaNum]){
+                specialAreas[areaNum][pointerNumber - 1] = false
+            }
+        }
+    }
+
+    override fun restoreCell(y: Int, x: Int) {
+        super.restoreCell(y, x)
+
+        for (areaNum in specialAreas4Cells[y][x].indices){
+            if (specialAreas4Cells[y][x][areaNum]){
+                specialAreas[areaNum][pointerNumber - 1] = true
+            }
+        }
+
+    }
+
+    override fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
+        val flags = super.getPossibleNumbers(y, x)
+
+        val areas = specialAreas4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                for (j in 0 until 9){
+                    flags[j] = flags[j] || specialAreas[i][j]
+                }
+            }
+        }
+
+        return flags
+    }
+
+    override fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+        super.fakeCell(table, y, x, number)
+
+        val areas = specialAreas4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                specialAreas[i][number] = true
+            }
+        }
+
+    }
+
+    override fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+        super.reFakeCell(table, y, x, number)
+
+        val areas = specialAreas4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                specialAreas[i][number] = false
+            }
+        }
     }
 
 

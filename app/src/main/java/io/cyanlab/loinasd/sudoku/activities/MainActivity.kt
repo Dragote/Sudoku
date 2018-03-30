@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.view.Window
 import android.view.WindowManager
 import io.cyanlab.loinasd.sudoku.R
-import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
+import io.cyanlab.loinasd.sudoku.models.games.*
 import io.cyanlab.loinasd.sudoku.view.ConsoleView
 
 class MainActivity : AppCompatActivity() {
@@ -19,16 +19,14 @@ class MainActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
 
-        var timeArray = LongArray(15)
+        val timeArray = LongArray(1)
 
         for (i in 0 until timeArray.size){
             val time = System.currentTimeMillis()
-            val table = TableGenerator(ConsoleView())
+            val table = AsteriskTG(ConsoleView())
             table.generateTable()
 
-            //println("Generated full sudoku table in ${System.currentTimeMillis() - time} m.s.")
-
-            table.createGame(table.DIFFICULTY_HARD)
+            table.puzzleTable(table.DIFFICULTY_HARD)
 
             timeArray[i] = System.currentTimeMillis() - time
 
@@ -44,9 +42,15 @@ class MainActivity : AppCompatActivity() {
 
         GirandolaTG().createTable()
 
-        CenterDotTG().createTable()
+        CenterDotTG().createTable()*/
 
 
-        WindokuTG().createTable()*/
+        /*DGTG(ConsoleView()).generateTable()
+
+        val time = System.currentTimeMillis()
+
+        while (System.currentTimeMillis() < time + 5000){}*/
+
+
     }
 }

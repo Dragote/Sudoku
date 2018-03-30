@@ -1,4 +1,5 @@
 package io.cyanlab.loinasd.sudoku.models
 
-class Row {
+class Row(val y: Int): Sector(){
+
 }
