@@ -1,8 +1,6 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-import io.cyanlab.loinasd.sudoku.view.IOut
-
-class DGTG(out: IOut): SpecialAreasTG(out) {
+class DGTG(): SpecialAreasTG() {
 
     override val specialAreasCoords = arrayOf(
             arrayListOf(intArrayOf(0,0),

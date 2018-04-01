@@ -1,11 +1,9 @@
 package io.cyanlab.loinasd.sudoku.models
 
-class Cell(private val number: Int, private var isHidden: Boolean, private val column: Column, private val row: Row, private val sector: Sector) {
+class Cell(private val number: Int, private var isHidden: Boolean, private val column: Int, private val row: Int, private val sector: Sector) {
 
     private val pencil = ArrayList<Int>(9)
 
-    val y = row.y
-    val x = column.x
     fun putPencil(number: Int):Boolean{
         if (pencil.contains(number)) return false
         pencil.add(number)
@@ -23,11 +21,5 @@ class Cell(private val number: Int, private var isHidden: Boolean, private val c
         return sector
     }
 
-    fun getRow(): Row{
-        return row
-    }
 
-    fun getColumn(): Column{
-        return column
-    }
 }

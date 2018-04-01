@@ -7,23 +7,29 @@ import android.view.Window
 import android.view.WindowManager
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.*
-import io.cyanlab.loinasd.sudoku.view.ConsoleView
+import io.cyanlab.loinasd.sudoku.view.*
 
 class MainActivity : AppCompatActivity() {
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //-------------VIEW-------------//
+        val  currentView: ViewOut = RView(this)
+        //------------------------------//
+
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.activity_main)
+        setContentView(currentView)
 
         val timeArray = LongArray(1)
 
         for (i in 0 until timeArray.size){
             val time = System.currentTimeMillis()
-            val table = AsteriskTG(ConsoleView())
+            val table = AsteriskTG()
             table.generateTable()
 
             table.puzzleTable(table.DIFFICULTY_HARD)

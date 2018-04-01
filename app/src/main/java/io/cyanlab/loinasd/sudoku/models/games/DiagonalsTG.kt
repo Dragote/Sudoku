@@ -1,13 +1,8 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-import io.cyanlab.loinasd.sudoku.view.IOut
-
-/**
- * Created by Анатолий on 26.03.2018.
- */
 
 @Deprecated(message = "DGTG works much faster and uses less memory")
-class DiagonalsTG(out: IOut): TableGenerator(out) {
+class DiagonalsTG(): TableGenerator() {
 
 
 
@@ -41,10 +36,10 @@ class DiagonalsTG(out: IOut): TableGenerator(out) {
 
     override fun generate(): Boolean{
 
-        completeTable = Array(9,{ IntArray(9,{0}) })
+        table.completeTable = Array(9,{ IntArray(9,{0}) })
 
-        rows = Array(9, {i -> BooleanArray(9, {false})})
-        columns = Array(9, {i -> BooleanArray(9, {false})})
+        table.rows = Array(9, {i -> BooleanArray(9, {false})})
+        table.columns = Array(9, {i -> BooleanArray(9, {false})})
 
         primeDiagonal = BooleanArray(9, {false})
         
@@ -99,7 +94,7 @@ class DiagonalsTG(out: IOut): TableGenerator(out) {
         for (i in 0..8){
             val y = if (!isSecond) prim[i][0] else second[i][0]
             val x = if (!isSecond) prim[i][1] else second[i][1]
-            if (!fillCell(y, x, buffer, BooleanArray(9, { j: Int -> square[j] || rows[y + offsetY][j] || columns[x+ offsetX][j]
+            if (!fillCell(y, x, buffer, BooleanArray(9, { j: Int -> square[j] || table.rows[y + offsetY][j] || table.columns[x+ offsetX][j]
                             || if (isPrime && y == x) primeDiagonal[j] else false
                             || if (isSecond && y == 2 - x) secondDiagonal[j] else false
                     }), square)) return false
@@ -115,11 +110,11 @@ class DiagonalsTG(out: IOut): TableGenerator(out) {
 
         for (y in 0..2)
             for (x in 0..2){
-                completeTable[y + offsetY][x + offsetX] = buffer[y][x]
+                table.completeTable[y + offsetY][x + offsetX] = buffer[y][x]
                 if (y == x && isPrime) primeDiagonal[buffer[y][x] - 1] = true
                 if (y == 2-x && isSecond) secondDiagonal[buffer[y][x] - 1] = true
-                rows[y+offsetY][buffer[y][x] - 1] = true
-                columns[x+offsetX][buffer[y][x] - 1] = true
+                table.rows[y+offsetY][buffer[y][x] - 1] = true
+                table.columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 
