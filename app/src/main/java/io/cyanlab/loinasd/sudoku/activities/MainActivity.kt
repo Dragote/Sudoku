@@ -42,13 +42,11 @@ class MainActivity : AppCompatActivity() {
 
         println(timeArray)
 
-        /*DiagonalsTG().createTable()
+        AsteriskTG().generateTable()
 
-        AsteriskTG().createTable()
+        GirandolaTG().generateTable()
 
-        GirandolaTG().createTable()
-
-        CenterDotTG().createTable()*/
+        CenterDotTG().generateTable()
 
 
         /*DGTG(ConsoleView()).generateTable()
