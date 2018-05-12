@@ -1,70 +1,47 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-import io.cyanlab.loinasd.sudoku.models.Table
+import io.cyanlab.loinasd.sudoku.view.ConsoleView
 import java.util.Random
 import java.util.logging.Logger
 
 
 open class TableGenerator internal constructor() {
 
-    //open lateinit var completeTable: Array<IntArray>
+    open lateinit var completeTable: Array<IntArray>
     protected open val r: Random = Random()
     protected val log: Logger = Logger.getLogger(TableGenerator::class.java.name)
     protected open val MAX_METHODS_COUNT = 3
     protected open val MAX_TRIALS = 20
     protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
-    //open lateinit var penTable: Array<IntArray>
-    open val LOGGING = true;
+    open lateinit var penTable: Array<IntArray>
+    open val LOGGING = true
+    val out: ConsoleView = ConsoleView(LOGGING)
 
     open val DIFFICULTY_EASY = 81 - 30
     open val DIFFICULTY_MEDIUM = 81 - 26
     open val DIFFICULTY_HARD = 81 - 24
 
-/*    protected lateinit var columns: Array<BooleanArray>
+    protected lateinit var columns: Array<BooleanArray>
     protected lateinit var rows: Array<BooleanArray>
-    protected lateinit var squares: Array<BooleanArray>*/
+    protected lateinit var squares: Array<BooleanArray>
 
     protected lateinit var trials: BooleanArray
-    var table: Table = Table()
+    //var table: Table = Table()
 
     fun generateTable() {
         while (!generate()) {
             System.gc()
         }
         System.gc()
-        printCompleteTable(table)
+       // out.printCompleteTable(table)
     }
 
-    //--------------LOGGING------------
-
-    private fun printGameTable(table: Table) {
-        if (LOGGING) {
-            for (row in table.penTable) {
-                for (n in row) {
-                    print(n.toString())
-                }
-            }
-            println()
-        }
-
-    }
-
-    private fun printCompleteTable(table: Table) {
-        if (LOGGING){
-            for (row in table.completeTable) {
-                for (n in row) {
-                    print(n.toString())
-                }
-            }
-            println()
-        }
-    }
     //---------------------------------------------
 
     protected open fun generate(): Boolean {
-        /*completeTable = Array(9, { IntArray(9, { j -> 0 }) })
-        rows = Array(9, { i -> BooleanArray(9, { false }) })
-        columns = Array(9, { i -> BooleanArray(9, { false }) })*/
+        completeTable = Array(9, { IntArray(9, { j -> 0 }) })
+        rows = Array(9, { BooleanArray(9, { false }) })
+        columns = Array(9, { BooleanArray(9, { false }) })
 
 
         var isOK = true
@@ -114,8 +91,8 @@ open class TableGenerator internal constructor() {
 
         for (i in offsetY..offsetY + 2)
             for (j in offsetX..offsetX + 2)
-                //completeTable[i][j] = 0
-                table.completeTable[i][j] = 0
+                completeTable[i][j] = 0
+                //table.completeTable[i][j] = 0
     }
 
     protected open fun fillSquare(sqNumber: Int, r: Random): Boolean {
@@ -140,7 +117,7 @@ open class TableGenerator internal constructor() {
 
         for (y in 0 until 3) {
             for (x in 0 until 3) {
-                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || table.rows[y + offsetY][i] || table.columns[x + offsetX][i] }), square)) return false
+                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y + offsetY][i] || columns[x + offsetX][i] }), square)) return false
             }
         }
         return true
@@ -149,9 +126,9 @@ open class TableGenerator internal constructor() {
     protected open fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int) {
         for (y in 0..2)
             for (x in 0..2) {
-                table.completeTable[y + offsetY][x + offsetX] = buffer[y][x]
-                table.rows[y + offsetY][buffer[y][x] - 1] = true
-                table.columns[x + offsetX][buffer[y][x] - 1] = true
+                completeTable[y + offsetY][x + offsetX] = buffer[y][x]
+                rows[y + offsetY][buffer[y][x] - 1] = true
+                columns[x + offsetX][buffer[y][x] - 1] = true
             }
     }
 
@@ -256,7 +233,7 @@ open class TableGenerator internal constructor() {
 
             nullCell(y, x)
 
-            if ((count < 20 || count % 3 == 0) && findFirst(table.penTable) != 1) {
+            if ((count < 20 || count % 3 == 0) && findFirst(penTable) != 1) {
                 restoreCell(y, x)
             } else {
                 count--
@@ -264,29 +241,29 @@ open class TableGenerator internal constructor() {
 
         }
 
-        printGameTable(table)
+        //out.printGameTable(table)
     }
 
     protected open fun startFromBeginning() {
 
-        table.penTable = Array(9, { y -> IntArray(9, { x -> table.completeTable[y][x] }) })
+        penTable = Array(9, { y -> IntArray(9, { x -> completeTable[y][x] }) })
 
-        table.squares = Array(9, { BooleanArray(9, { true }) })
-        table.rows = Array(9, { BooleanArray(9, { true }) })
-        table.columns = Array(9, { BooleanArray(9, { true }) })
+        squares = Array(9, { BooleanArray(9, { true }) })
+        rows = Array(9, { BooleanArray(9, { true }) })
+        columns = Array(9, { BooleanArray(9, { true }) })
 
         trials = BooleanArray(81, { false })
 
     }
 
     protected open fun nullCell(y: Int, x: Int) {
-        pointerNumber = table.penTable[y][x]
+        pointerNumber = penTable[y][x]
 
-        table.rows[y][pointerNumber - 1] = false
-        table.columns[x][pointerNumber - 1] = false
-        table.squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = false
+        rows[y][pointerNumber - 1] = false
+        columns[x][pointerNumber - 1] = false
+        squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = false
 
-        table.penTable[y][x] = 0
+        penTable[y][x] = 0
 
         pointerY = y
         pointerX = x
@@ -295,11 +272,11 @@ open class TableGenerator internal constructor() {
     }
 
     protected open fun restoreCell(y: Int, x: Int) {
-        table.penTable[y][x] = pointerNumber
+        penTable[y][x] = pointerNumber
 
-        table.rows[y][pointerNumber - 1] = true
-        table.columns[x][pointerNumber - 1] = true
-        table.squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = true
+        rows[y][pointerNumber - 1] = true
+        columns[x][pointerNumber - 1] = true
+        squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = true
     }
 
     private fun findFirst(table: Array<IntArray>): Int {
@@ -332,29 +309,21 @@ open class TableGenerator internal constructor() {
     }
 
     protected open fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
-        return BooleanArray(9, { i -> table.squares[(y / 3) * 3 + x / 3][i] || table.rows[y][i] || table.columns[x][i] })
+        return BooleanArray(9, { i -> squares[(y / 3) * 3 + x / 3][i] || rows[y][i] || columns[x][i] })
     }
 
     protected open fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
-        /*table.rows[y][number] = true
-        table.columns[x][number] = true
-        table.squares[(y / 3) * 3 + x / 3][number] = true*/
-        //table[y][x] = number + 1
+        rows[y][number] = true
+        columns[x][number] = true
+        squares[(y / 3) * 3 + x / 3][number] = true
+        table[y][x] = number + 1
     }
 
     protected open fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
         table[y][x] = 0
-        /*rows[y][number] = false
+        rows[y][number] = false
         columns[x][number] = false
-        squares[(y / 3) * 3 + x / 3][number] = false*/
-    }
-
-    private fun printMatrixAsLine(table: Table) {
-        for (row in table.rows) {
-            for (n in row) {
-                print(n.toString())
-            }
-        }
+        squares[(y / 3) * 3 + x / 3][number] = false
     }
 
 }

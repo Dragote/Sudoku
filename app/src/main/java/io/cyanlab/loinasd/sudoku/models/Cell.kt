@@ -1,8 +1,9 @@
 package io.cyanlab.loinasd.sudoku.models
 
-class Cell(private val number: Int, private var isHidden: Boolean, private val column: Int, private val row: Int, private val sector: Sector) {
+internal class Cell(internal val number: Int, internal var isHidden: Boolean,
+           internal val column: Int, internal val row: Int, internal val sector: Sector) {
 
-    private val pencil = ArrayList<Int>(9)
+    internal val pencil = ArrayList<Int>(9)
 
     fun putPencil(number: Int):Boolean{
         if (pencil.contains(number)) return false
@@ -17,9 +18,7 @@ class Cell(private val number: Int, private var isHidden: Boolean, private val c
         return true
     }
 
-    fun getSector():Sector{
-        return sector
-    }
+
 
 
 }

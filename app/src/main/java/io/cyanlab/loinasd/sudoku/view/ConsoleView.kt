@@ -1,16 +1,11 @@
 package io.cyanlab.loinasd.sudoku.view
 
-import android.content.Context
 import io.cyanlab.loinasd.sudoku.models.Cell
 import io.cyanlab.loinasd.sudoku.models.Table
-import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
-import java.util.logging.Logger
 
-class ConsoleView(context: Context?) : ViewOut(context) {
+class ConsoleView(val logging: Boolean) {
 
-    protected val log: Logger = Logger.getLogger(TableGenerator::class.java.name)
-
-     fun printGameTable(table: Table) {
+    fun printGameTable(table: Table) {
         for (row in table.penTable) {
             for (n in row) {
                 print(n.toString())
@@ -19,18 +14,21 @@ class ConsoleView(context: Context?) : ViewOut(context) {
         println()
     }
 
-     fun printCompleteTable(table: Table) {
+/*     fun printCompleteTable(table: Table) {
         for (row in table.completeTable) {
             for (n in row) {
                 print(n.toString())
             }
         }
         println()
+    }*/
+
+    fun printMatrixAsLine(table: Table) {
+        for (row in table.rows) {
+            for (n in row) {
+                print(n.toString())
+            }
+        }
     }
-
-     fun chosen(cell: Cell) {
-
-    }
-
 
 }
