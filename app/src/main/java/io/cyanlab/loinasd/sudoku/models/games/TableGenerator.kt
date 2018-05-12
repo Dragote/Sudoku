@@ -1,21 +1,22 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
+import io.cyanlab.loinasd.sudoku.models.Table
 import io.cyanlab.loinasd.sudoku.view.ConsoleView
+import io.cyanlab.loinasd.sudoku.view.Loggable
 import java.util.Random
 import java.util.logging.Logger
 
 
-open class TableGenerator internal constructor() {
+open class TableGenerator internal constructor(): Loggable {
 
     open lateinit var completeTable: Array<IntArray>
     protected open val r: Random = Random()
-    protected val log: Logger = Logger.getLogger(TableGenerator::class.java.name)
     protected open val MAX_METHODS_COUNT = 3
     protected open val MAX_TRIALS = 20
     protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
     open lateinit var penTable: Array<IntArray>
     open val LOGGING = true
-    val out: ConsoleView = ConsoleView(LOGGING)
+    //val out: ConsoleView = ConsoleView(LOGGING)
 
     open val DIFFICULTY_EASY = 81 - 30
     open val DIFFICULTY_MEDIUM = 81 - 26
@@ -26,14 +27,15 @@ open class TableGenerator internal constructor() {
     protected lateinit var squares: Array<BooleanArray>
 
     protected lateinit var trials: BooleanArray
-    //var table: Table = Table()
+
+    lateinit var table: Table
 
     fun generateTable() {
         while (!generate()) {
             System.gc()
         }
         System.gc()
-       // out.printCompleteTable(table)
+        printCompleteTable(table)
     }
 
     //---------------------------------------------

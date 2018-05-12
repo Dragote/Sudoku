@@ -22,13 +22,13 @@ abstract class SpecialCellsTG(): TableGenerator() {
         val specY = specialCellsCoords[sqNumber][0]
         val specX = specialCellsCoords[sqNumber][1]
 
-        if (!fillCell(specY, specX, buffer, BooleanArray(9, { i: Int -> square[i] || table.rows[specY+ offsetY][i] || table.columns[specX+ offsetX][i] || specialCells[i]
+        if (!fillCell(specY, specX, buffer, BooleanArray(9, { i: Int -> square[i] || rows[specY+ offsetY][i] || columns[specX+ offsetX][i] || specialCells[i]
                 }), square)) return false
 
         for (y in 0..2){
             for (x in 0..2){
                 if (x != specX || y != specY) {
-                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || table.rows[y + offsetY][i] || table.columns[x + offsetX][i]
+                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y + offsetY][i] || columns[x + offsetX][i]
                                     || if (y == specialCellsCoords[sqNumber][0] && x == specialCellsCoords[sqNumber][1]) specialCells[i] else false
                             }), square)) return false
                 }
@@ -46,9 +46,9 @@ abstract class SpecialCellsTG(): TableGenerator() {
 
         for (y in 0..2)
             for (x in 0..2){
-                table.completeTable[y + offsetY][x + offsetX] = buffer[y][x]
-                table.rows[y+offsetY][buffer[y][x] - 1] = true
-                table.columns[x+offsetX][buffer[y][x] - 1] = true
+                completeTable[y + offsetY][x + offsetX] = buffer[y][x]
+                rows[y+offsetY][buffer[y][x] - 1] = true
+                columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 
