@@ -34,7 +34,7 @@ abstract class SpecialAreasTG(): TableGenerator() {
             for (x in 0 until 3){
                 if (specialAreas4Cells[y + offsetY][x + offsetX].contains(true)
                         && !fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i]
-                                || table.rows[y+ offsetY][i] || table.columns[x + offsetX][i]
+                                || rows[y+ offsetY][i] || columns[x + offsetX][i]
                                 || getAreas(specialAreas4Cells[y + offsetY][x + offsetX], i)}), square)) return false
             }
         }
@@ -42,7 +42,7 @@ abstract class SpecialAreasTG(): TableGenerator() {
         for (y in 0 until 3){
             for (x in 0 until 3){
                 if (buffer[y][x] == 0){
-                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || table.rows[y+ offsetY][i] || table.columns[x + offsetX][i]}), square)) return false
+                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y+ offsetY][i] || columns[x + offsetX][i]}), square)) return false
                 }
             }
         }
@@ -65,9 +65,9 @@ abstract class SpecialAreasTG(): TableGenerator() {
                 for (i in specialAreas4Cells[y + offsetY][x + offsetX].indices){
                     if (specialAreas4Cells[y + offsetY][x + offsetX][i]) specialAreas[i][buffer[y][x] - 1] = true
                 }
-                table.completeTable[y + offsetY][x + offsetX] = buffer[y][x]
-                table.rows[y+offsetY][buffer[y][x] - 1] = true
-                table.columns[x+offsetX][buffer[y][x] - 1] = true
+                completeTable[y + offsetY][x + offsetX] = buffer[y][x]
+                rows[y+offsetY][buffer[y][x] - 1] = true
+                columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 

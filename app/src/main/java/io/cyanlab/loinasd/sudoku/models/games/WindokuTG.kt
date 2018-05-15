@@ -3,7 +3,7 @@ package io.cyanlab.loinasd.sudoku.models.games
 /**
  * Created by Анатолий on 27.03.2018.
  */
-class WindokuTG(): SpecialAreasTG() {
+class WindokuTG: SpecialAreasTG() {
 
     override val specialAreasCoords = arrayOf(
     arrayListOf(intArrayOf(1,1), intArrayOf(1,2), intArrayOf(1,3), intArrayOf(2,1), intArrayOf(2,2), intArrayOf(2,3), intArrayOf(3,1), intArrayOf(3,2), intArrayOf(3,3)),

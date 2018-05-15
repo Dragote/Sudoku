@@ -8,7 +8,7 @@ interface Loggable {
         get() = Logger.getLogger(this.javaClass.name)
 
     fun printGameTable(table: Table) {
-        for (row in table.penTable) {
+        for (row in table.completeTable) {
             for (n in row) {
                 print(n.toString())
             }
@@ -17,7 +17,7 @@ interface Loggable {
     }
 
     fun printCompleteTable(table: Table) {
-        for (row in table.penTable) {//completeTable) {
+        for (row in table.completeTable) {//completeTable) {
             for (n in row) {
                 print(n.toString())
             }

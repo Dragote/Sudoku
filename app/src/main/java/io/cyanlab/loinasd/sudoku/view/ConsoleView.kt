@@ -5,14 +5,14 @@ import io.cyanlab.loinasd.sudoku.models.Table
 
 class ConsoleView(val logging: Boolean) {
 
-    fun printGameTable(table: Table) {
+/*    fun printGameTable(table: Table) {
         for (row in table.penTable) {
             for (n in row) {
                 print(n.toString())
             }
         }
         println()
-    }
+    }*/
 
 /*     fun printCompleteTable(table: Table) {
         for (row in table.completeTable) {

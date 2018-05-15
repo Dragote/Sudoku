@@ -3,6 +3,8 @@ package io.cyanlab.loinasd.sudoku.models
 internal class Cell(internal val number: Int, internal var isHidden: Boolean,
            internal val column: Int, internal val row: Int, internal val sector: Sector) {
 
+
+
     internal val pencil = ArrayList<Int>(9)
 
     fun putPencil(number: Int):Boolean{

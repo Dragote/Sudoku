@@ -1,13 +1,11 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
 import io.cyanlab.loinasd.sudoku.models.Table
-import io.cyanlab.loinasd.sudoku.view.ConsoleView
 import io.cyanlab.loinasd.sudoku.view.Loggable
 import java.util.Random
-import java.util.logging.Logger
 
 
-open class TableGenerator internal constructor(): Loggable {
+open class TableGenerator(): Loggable {
 
     open lateinit var completeTable: Array<IntArray>
     protected open val r: Random = Random()
@@ -28,22 +26,24 @@ open class TableGenerator internal constructor(): Loggable {
 
     protected lateinit var trials: BooleanArray
 
-    lateinit var table: Table
-
-    fun generateTable() {
+    fun generateTable(): Table {
         while (!generate()) {
             System.gc()
         }
         System.gc()
-        printCompleteTable(table)
+        return fillTable()
+        //printCompleteTable(table)
     }
 
     //---------------------------------------------
+
+    private fun fillTable(): Table = Table(rows, columns, squares, completeTable)
 
     protected open fun generate(): Boolean {
         completeTable = Array(9, { IntArray(9, { j -> 0 }) })
         rows = Array(9, { BooleanArray(9, { false }) })
         columns = Array(9, { BooleanArray(9, { false }) })
+        squares = Array(9, { BooleanArray(9, { false }) })
 
 
         var isOK = true
