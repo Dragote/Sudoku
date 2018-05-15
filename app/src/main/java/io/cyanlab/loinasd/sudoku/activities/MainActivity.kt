@@ -1,23 +1,23 @@
 package io.cyanlab.loinasd.sudoku.activities
 
 import android.content.pm.ActivityInfo
+import android.graphics.Point
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.ViewGroup
+import android.view.Gravity
 import android.view.Window
 import android.view.WindowManager
 import android.widget.GridLayout
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
-import io.cyanlab.loinasd.sudoku.models.Table
-import io.cyanlab.loinasd.sudoku.models.games.*
-import io.cyanlab.loinasd.sudoku.view.*
+import io.cyanlab.loinasd.sudoku.models.games.Table
+import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
 import kotlinx.android.synthetic.main.sample.*
+import kotlin.concurrent.thread
 
 class MainActivity : AppCompatActivity() {
 
 
-    val lp = GridLayout.LayoutParams()
     val margin = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,37 +32,19 @@ class MainActivity : AppCompatActivity() {
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.sample)
 
-        val width = grid.width/9 - 10
-
-        lp.width = width
-        lp.height = width
-        lp.setMargins(margin, margin, margin, margin)
-
-
-
-        grid.refreshDrawableState()
-
-
-        val timeArray = LongArray(1)
-
-        for (i in 0 until timeArray.size){
+        thread {
             val time = System.currentTimeMillis()
-            val table = TableGenerator()
-            table.generateTable()
 
-            table.puzzleTable(table.DIFFICULTY_HARD)
-
-            timeArray[i] = System.currentTimeMillis() - time
+            val table = TableGenerator(Table()).generateTable(TableGenerator.DIFFICULTY_HARD)
 
             println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
 
+
+            runOnUiThread{
+                ptable(table)
+            }
         }
 
-
-
-        ptable(TableGenerator().generateTable())
-
-        println(timeArray)
 
   /*      AsteriskTG().generateTable()
 
@@ -71,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         CenterDotTG().generateTable()*/
 
 
-        /*DGTG(ConsoleView()).generateTable()
+        /*DiagonalTable(ConsoleView()).generateTable()
 
         val time = System.currentTimeMillis()
 
@@ -81,11 +63,31 @@ class MainActivity : AppCompatActivity() {
     }
     //---------TODO: move to controller|view
     fun ptable(table: Table) {
-        for (i in 1..81) {
-            val tv = TextView(this)
-            tv.text = "$i"
 
-            grid.addView(tv, lp)
+        val params = GridLayout.LayoutParams()
+
+        val size = Point()
+
+        windowManager?.defaultDisplay?.getSize(size)
+
+        val width = size.x/9 - 10
+
+        params.width = width
+        params.height = width
+        params.setMargins(margin, margin, margin, margin)
+
+        for (y in 0 until 9) {
+            for (x in 0 until 9){
+                val tv = TextView(this)
+                tv.text = if (table.penTable[y][x])
+                    "${table.completeTable[y][x]}"
+                else
+                    "${0}"
+
+                tv.gravity = Gravity.CENTER
+                grid.addView(tv, params)
+            }
+
         }
     }
 

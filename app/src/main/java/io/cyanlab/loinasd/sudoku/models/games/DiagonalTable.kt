@@ -1,9 +1,9 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-class DGTG(): SpecialAreasTG() {
+class DiagonalTable: Table() {
 
-    override val specialAreasCoords = arrayOf(
-            arrayListOf(intArrayOf(0,0),
+    override val sectorsCoords = arrayOf(
+            arrayOf(intArrayOf(0,0),
                     intArrayOf(1,1),
                     intArrayOf(2,2),
                     intArrayOf(3,3),
@@ -12,7 +12,7 @@ class DGTG(): SpecialAreasTG() {
                     intArrayOf(6,6),
                     intArrayOf(7,7),
                     intArrayOf(8,8)),
-            arrayListOf(intArrayOf(0,8),
+            arrayOf(intArrayOf(0,8),
                     intArrayOf(1,7),
                     intArrayOf(2,6),
                     intArrayOf(3,5),

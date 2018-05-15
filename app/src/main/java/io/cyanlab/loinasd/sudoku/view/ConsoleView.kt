@@ -1,7 +1,6 @@
 package io.cyanlab.loinasd.sudoku.view
 
-import io.cyanlab.loinasd.sudoku.models.Cell
-import io.cyanlab.loinasd.sudoku.models.Table
+import io.cyanlab.loinasd.sudoku.models.games.Table
 
 class ConsoleView(val logging: Boolean) {
 

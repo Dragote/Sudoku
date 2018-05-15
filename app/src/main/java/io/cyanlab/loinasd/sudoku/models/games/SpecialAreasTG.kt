@@ -1,13 +1,16 @@
+/*
 package io.cyanlab.loinasd.sudoku.models.games
 
+*/
 /**
  * Created by Анатолий on 27.03.2018.
- */
+ *//*
+
 abstract class SpecialAreasTG(): TableGenerator() {
 
     protected abstract val specialAreasCoords : Array<ArrayList<IntArray>>
 
-    protected open lateinit var specialAreas : Array<BooleanArray>
+    protected lateinit var specialAreas : Array<BooleanArray>
 
     protected lateinit var specialAreas4Cells:  Array<Array<BooleanArray>>
 
@@ -18,7 +21,7 @@ abstract class SpecialAreasTG(): TableGenerator() {
         specialAreas4Cells = Array(9,{ Array(9, { BooleanArray(specialAreasCoords.size, {false}) }) })
         for (area in 0 until specialAreasCoords.size){
             for (cell in 0 until specialAreasCoords[area].size){
-                specialAreas4Cells [specialAreasCoords[area][cell][0]] [specialAreasCoords[area][cell][1]][area] = true
+                specialAreas4Cells [specialAreasCoords[area][cell][0]][specialAreasCoords[area][cell][1]][area] = true
             }
         }
 
@@ -69,11 +72,6 @@ abstract class SpecialAreasTG(): TableGenerator() {
                 rows[y+offsetY][buffer[y][x] - 1] = true
                 columns[x+offsetX][buffer[y][x] - 1] = true
             }
-    }
-
-    override fun startFromBeginning() {
-        super.startFromBeginning()
-        specialAreas = Array(specialAreasCoords.size, {BooleanArray(9, {true})})
     }
 
     override fun nullCell(y: Int, x: Int) {
@@ -139,4 +137,4 @@ abstract class SpecialAreasTG(): TableGenerator() {
     }
 
 
-}
+}*/

@@ -1,49 +1,68 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-import io.cyanlab.loinasd.sudoku.models.Table
 import io.cyanlab.loinasd.sudoku.view.Loggable
 import java.util.Random
 
 
-open class TableGenerator(): Loggable {
+open class TableGenerator(val sudoku: Table): Loggable {
 
-    open lateinit var completeTable: Array<IntArray>
+    companion object {
+        val DIFFICULTY_EASY = 81 - 30
+        val DIFFICULTY_MEDIUM = 81 - 26
+        val DIFFICULTY_HARD = 81 - 24
+    }
+
     protected open val r: Random = Random()
+
     protected open val MAX_METHODS_COUNT = 3
     protected open val MAX_TRIALS = 20
     protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
+
     open lateinit var penTable: Array<IntArray>
+
     open val LOGGING = true
     //val out: ConsoleView = ConsoleView(LOGGING)
 
-    open val DIFFICULTY_EASY = 81 - 30
-    open val DIFFICULTY_MEDIUM = 81 - 26
-    open val DIFFICULTY_HARD = 81 - 24
-
-    protected lateinit var columns: Array<BooleanArray>
-    protected lateinit var rows: Array<BooleanArray>
-    protected lateinit var squares: Array<BooleanArray>
-
     protected lateinit var trials: BooleanArray
 
-    fun generateTable(): Table {
+    fun generateTable(difficulty: Int): Table {
+
         while (!generate()) {
             System.gc()
         }
+
         System.gc()
-        return fillTable()
-        //printCompleteTable(table)
+
+        puzzleTable(
+                when (difficulty){
+            DIFFICULTY_EASY -> difficulty
+            DIFFICULTY_MEDIUM -> difficulty
+            DIFFICULTY_HARD -> difficulty
+            else -> DIFFICULTY_MEDIUM
+        })
+
+        printGameTable(sudoku)
+        return sudoku
+
     }
 
     //---------------------------------------------
 
-    private fun fillTable(): Table = Table(rows, columns, squares, completeTable)
-
     protected open fun generate(): Boolean {
-        completeTable = Array(9, { IntArray(9, { j -> 0 }) })
-        rows = Array(9, { BooleanArray(9, { false }) })
-        columns = Array(9, { BooleanArray(9, { false }) })
-        squares = Array(9, { BooleanArray(9, { false }) })
+
+        sudoku.completeTable = Array(9, { IntArray(9, { j -> 0 }) })
+        sudoku.rows = Array(9, { BooleanArray(9, { false }) })
+        sudoku.columns = Array(9, { BooleanArray(9, { false }) })
+        sudoku.squares = Array(9, { BooleanArray(9, { false }) })
+
+        sudoku.sectors4Cells = Array(9,{ Array(9, { BooleanArray(sudoku.sectorsCoords.size, {false}) }) })
+        for (area in 0 until sudoku.sectorsCoords.size){
+            for (cell in 0 until sudoku.sectorsCoords[area].size){
+                sudoku.sectors4Cells [sudoku.sectorsCoords[area][cell][0]][sudoku.sectorsCoords[area][cell][1]][area] = true
+            }
+        }
+
+        sudoku.sectors = Array(sudoku.sectorsCoords.size, {BooleanArray(9, {false})})
 
 
         var isOK = true
@@ -93,7 +112,7 @@ open class TableGenerator(): Loggable {
 
         for (i in offsetY..offsetY + 2)
             for (j in offsetX..offsetX + 2)
-                completeTable[i][j] = 0
+                sudoku.completeTable[i][j] = 0
                 //table.completeTable[i][j] = 0
     }
 
@@ -117,20 +136,36 @@ open class TableGenerator(): Loggable {
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
 
-        for (y in 0 until 3) {
-            for (x in 0 until 3) {
-                if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || rows[y + offsetY][i] || columns[x + offsetX][i] }), square)) return false
+        for (y in 0 until 3){
+            for (x in 0 until 3){
+                if (sudoku.sectors4Cells[y + offsetY][x + offsetX].contains(true)
+                        && !fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i]
+                                || sudoku.rows[y+ offsetY][i] || sudoku.columns[x + offsetX][i]
+                                || getAreas(sudoku.sectors4Cells[y + offsetY][x + offsetX], i)}), square)) return false
             }
         }
+
+        for (y in 0 until 3){
+            for (x in 0 until 3){
+                if (buffer[y][x] == 0){
+                    if (!fillCell(y, x, buffer, BooleanArray(9, { i: Int -> square[i] || sudoku.rows[y+ offsetY][i] || sudoku.columns[x + offsetX][i]}), square)) return false
+                }
+            }
+        }
+
+
         return true
     }
 
     protected open fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int) {
         for (y in 0..2)
-            for (x in 0..2) {
-                completeTable[y + offsetY][x + offsetX] = buffer[y][x]
-                rows[y + offsetY][buffer[y][x] - 1] = true
-                columns[x + offsetX][buffer[y][x] - 1] = true
+            for (x in 0..2){
+                for (i in sudoku.sectors4Cells[y + offsetY][x + offsetX].indices){
+                    if (sudoku.sectors4Cells[y + offsetY][x + offsetX][i]) sudoku.sectors[i][buffer[y][x] - 1] = true
+                }
+                sudoku.completeTable[y + offsetY][x + offsetX] = buffer[y][x]
+                sudoku.rows[y+offsetY][buffer[y][x] - 1] = true
+                sudoku.columns[x+offsetX][buffer[y][x] - 1] = true
             }
     }
 
@@ -188,7 +223,7 @@ open class TableGenerator(): Loggable {
         return column
     }
 
-    protected open fun getSquare(table: Array<IntArray>, y: Int, x: Int): BooleanArray {
+    private fun getSquare(table: Array<IntArray>, y: Int, x: Int): BooleanArray {
 
         val square = BooleanArray(9, { false })
 
@@ -197,6 +232,14 @@ open class TableGenerator(): Loggable {
                 if (table[ys][xs] != 0) square[table[ys][xs] - 1] = true
 
         return square
+    }
+
+    private fun getAreas(areas: BooleanArray, number: Int):Boolean{
+        var flag = false
+        for (i in areas.indices){
+            if (areas[i]) flag = flag || sudoku.sectors[i][number]
+        }
+        return flag
     }
 
 
@@ -243,27 +286,38 @@ open class TableGenerator(): Loggable {
 
         }
 
+        sudoku.penTable = Array(9, {y -> BooleanArray(9, {x -> penTable[y][x] != 0})})
+
         //out.printGameTable(table)
     }
 
-    protected open fun startFromBeginning() {
+    private fun startFromBeginning() {
 
-        penTable = Array(9, { y -> IntArray(9, { x -> completeTable[y][x] }) })
+        penTable = Array(9, { y -> IntArray(9, { x -> sudoku.completeTable[y][x] }) })
 
-        squares = Array(9, { BooleanArray(9, { true }) })
-        rows = Array(9, { BooleanArray(9, { true }) })
-        columns = Array(9, { BooleanArray(9, { true }) })
+        sudoku.squares = Array(9, { BooleanArray(9, { true }) })
+        sudoku.rows = Array(9, { BooleanArray(9, { true }) })
+        sudoku.columns = Array(9, { BooleanArray(9, { true }) })
+
+        sudoku.sectors = Array(sudoku.sectorsCoords.size, {BooleanArray(9, {true})})
 
         trials = BooleanArray(81, { false })
 
     }
 
     protected open fun nullCell(y: Int, x: Int) {
+
         pointerNumber = penTable[y][x]
 
-        rows[y][pointerNumber - 1] = false
-        columns[x][pointerNumber - 1] = false
-        squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = false
+        sudoku.rows[y][pointerNumber - 1] = false
+        sudoku.columns[x][pointerNumber - 1] = false
+        sudoku.squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = false
+
+        for (areaNum in sudoku.sectors4Cells[y][x].indices){
+            if (sudoku.sectors4Cells[y][x][areaNum]){
+                sudoku.sectors[areaNum][pointerNumber - 1] = false
+            }
+        }
 
         penTable[y][x] = 0
 
@@ -276,9 +330,15 @@ open class TableGenerator(): Loggable {
     protected open fun restoreCell(y: Int, x: Int) {
         penTable[y][x] = pointerNumber
 
-        rows[y][pointerNumber - 1] = true
-        columns[x][pointerNumber - 1] = true
-        squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = true
+        sudoku.rows[y][pointerNumber - 1] = true
+        sudoku.columns[x][pointerNumber - 1] = true
+        sudoku.squares[(y / 3) * 3 + x / 3][pointerNumber - 1] = true
+
+        for (areaNum in sudoku.sectors4Cells[y][x].indices){
+            if (sudoku.sectors4Cells[y][x][areaNum]){
+                sudoku.sectors[areaNum][pointerNumber - 1] = true
+            }
+        }
     }
 
     private fun findFirst(table: Array<IntArray>): Int {
@@ -311,21 +371,52 @@ open class TableGenerator(): Loggable {
     }
 
     protected open fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
-        return BooleanArray(9, { i -> squares[(y / 3) * 3 + x / 3][i] || rows[y][i] || columns[x][i] })
+
+        val flags = BooleanArray(9, { i -> sudoku.squares[(y / 3) * 3 + x / 3][i] || sudoku.rows[y][i] || sudoku.columns[x][i] })
+
+        val areas = sudoku.sectors4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                for (j in 0 until 9){
+                    flags[j] = flags[j] || sudoku.sectors[i][j]
+                }
+            }
+        }
+
+        return flags
     }
 
     protected open fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
-        rows[y][number] = true
-        columns[x][number] = true
-        squares[(y / 3) * 3 + x / 3][number] = true
+
+        sudoku.rows[y][number] = true
+        sudoku.columns[x][number] = true
+        sudoku.squares[(y / 3) * 3 + x / 3][number] = true
         table[y][x] = number + 1
+
+        val areas = sudoku.sectors4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                sudoku.sectors[i][number] = true
+            }
+        }
     }
 
     protected open fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+
         table[y][x] = 0
-        rows[y][number] = false
-        columns[x][number] = false
-        squares[(y / 3) * 3 + x / 3][number] = false
+        sudoku.rows[y][number] = false
+        sudoku.columns[x][number] = false
+        sudoku.squares[(y / 3) * 3 + x / 3][number] = false
+
+        val areas = sudoku.sectors4Cells[y][x]
+
+        for (i in 0 until areas.size){
+            if (areas[i]){
+                sudoku.sectors[i][number] = false
+            }
+        }
     }
 
 }

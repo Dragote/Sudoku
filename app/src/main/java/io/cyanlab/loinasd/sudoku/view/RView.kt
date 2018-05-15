@@ -7,11 +7,8 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.text.TextPaint
 import android.util.AttributeSet
-import android.view.View
 
 import io.cyanlab.loinasd.sudoku.R
-import io.cyanlab.loinasd.sudoku.models.Cell
-import io.cyanlab.loinasd.sudoku.models.Table
 
 /**
  * TODO: document

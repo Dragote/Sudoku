@@ -1,6 +1,6 @@
 package io.cyanlab.loinasd.sudoku.view
 
-import io.cyanlab.loinasd.sudoku.models.Table
+import io.cyanlab.loinasd.sudoku.models.games.Table
 import java.util.logging.Logger
 
 interface Loggable {
@@ -8,9 +8,9 @@ interface Loggable {
         get() = Logger.getLogger(this.javaClass.name)
 
     fun printGameTable(table: Table) {
-        for (row in table.completeTable) {
-            for (n in row) {
-                print(n.toString())
+        for (y in 0 until 9) {
+            for (x in 0 until 9) {
+                print(if (table.penTable[y][x]) table.completeTable[y][x] else 0)
             }
         }
         println()
