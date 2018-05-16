@@ -1,9 +1,6 @@
 package io.cyanlab.loinasd.sudoku.models
 
-open class Sector{
+open class Sector(val cells: Array<Cell>){
 
-    internal var cells : Array<Cell>? = null
-        set(value){
-            cells = value
-        }
+
 }

@@ -5,8 +5,8 @@ import io.cyanlab.loinasd.sudoku.models.games.Table
 class ConsoleView(val logging: Boolean) {
 
 /*    fun printGameTable(table: Table) {
-        for (row in table.penTable) {
-            for (n in row) {
+        for (y in table.penTable) {
+            for (n in y) {
                 print(n.toString())
             }
         }
@@ -14,8 +14,8 @@ class ConsoleView(val logging: Boolean) {
     }*/
 
 /*     fun printCompleteTable(table: Table) {
-        for (row in table.completeTable) {
-            for (n in row) {
+        for (y in table.completeTable) {
+            for (n in y) {
                 print(n.toString())
             }
         }

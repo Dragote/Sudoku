@@ -1,8 +1,6 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
-/**
- * Created by Lev on 01.04.2018.
- */
+
 open class Table{
 
     var rows: Array<BooleanArray> = emptyArray()

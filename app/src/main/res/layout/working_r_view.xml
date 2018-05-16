@@ -10,29 +10,29 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        app:layout_constraintTop_toBottomOf="@+id/medium" />
+        tools:layout_editor_absoluteY="56dp" />
 
     <View
         android:id="@+id/divider_ver_1"
         android:layout_width="2dp"
         android:layout_height="250dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        app:layout_constraintTop_toBottomOf="@+id/medium"
-        tools:layout_editor_absoluteX="180dp" />
+        tools:layout_editor_absoluteX="180dp"
+        tools:layout_editor_absoluteY="56dp" />
 
     <View
         android:id="@+id/divider_ver_2"
         android:layout_width="2dp"
         android:layout_height="250dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        app:layout_constraintTop_toBottomOf="@+id/medium" />
+        tools:layout_editor_absoluteY="56dp" />
 
     <View
         android:id="@+id/divider_hor_2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        app:layout_constraintTop_toBottomOf="@+id/medium" />
+        tools:layout_editor_absoluteY="56dp" />
 
     <android.support.v7.widget.GridLayout
         android:id="@+id/control"
@@ -51,7 +51,7 @@
         app:columnCount="9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/medium">
+        tools:layout_editor_absoluteY="56dp">
 
     </android.support.v7.widget.GridLayout>
 
@@ -71,53 +71,5 @@
             android:textColor="@color/MaterialDarkerGreen"
             android:textSize="30sp" />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/progress_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/WhiteLowAlpha"
-        android:visibility="gone"
-        tools:layout_editor_absoluteY="56dp">
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true" />
-
-    </RelativeLayout>
-
-    <Button
-        android:id="@+id/hard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:text="HARD"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/medium"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="MEDIUM"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/easy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="EASY"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

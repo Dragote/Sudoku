@@ -1,6 +1,7 @@
 package io.cyanlab.loinasd.sudoku.activities
 
 import android.content.pm.ActivityInfo
+import android.graphics.Color
 import android.graphics.Point
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,9 @@ import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.Table
 import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
+import kotlinx.android.synthetic.main.m_difficulty.*
+import kotlinx.android.synthetic.main.main_menu.*
+import kotlinx.android.synthetic.main.progress_bar.*
 import kotlinx.android.synthetic.main.working_r_view.*
 import kotlin.concurrent.thread
 
@@ -30,37 +34,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //-------------VIEW-------------//
-        //val  currentView: ViewOut = RView(this)
-        //------------------------------//
 
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.working_r_view)
+        setContentView(R.layout.main_menu)
 
-        easy.setOnClickListener(gameModeSelector)
-        medium.setOnClickListener(gameModeSelector)
-        hard.setOnClickListener(gameModeSelector)
-
-        getControlNumbers()
-
-        gameModeSelector.onClick(easy)
+        startGame.setOnClickListener(GameMenuSelector())
 
 
-  /*      AsteriskTG().generateTable()
 
-        GirandolaTG().generateTable()
+/*        getControlNumbers()
 
-        CenterDotTG().generateTable()*/
-
-
-        /*DiagonalTable(ConsoleView()).generateTable()
-
-        val time = System.currentTimeMillis()
-
-        while (System.currentTimeMillis() < time + 5000){}*/
-
+        gameModeSelector.onClick(easy)*/
 
     }
 
@@ -286,9 +272,24 @@ class MainActivity : AppCompatActivity() {
 
     var generator: Thread? = null
 
+    inner class GameMenuSelector: View.OnClickListener{
+        override fun onClick(p0: View?) {
+            p0?.setBackgroundColor(Color.GREEN)
+            if (p0 == startGame)
+                setContentView(R.layout.m_difficulty)
+            easy.setOnClickListener(gameModeSelector)
+            medium.setOnClickListener(gameModeSelector)
+            hard.setOnClickListener(gameModeSelector)
+
+        }
+
+    }
+
     inner class GameModeSelector: View.OnClickListener{
 
         override fun onClick(p0: View?) {
+
+            p0?.setBackgroundColor(Color.GREEN)
 
             if (generator != null)
                 return
@@ -303,7 +304,10 @@ class MainActivity : AppCompatActivity() {
                 else -> TableGenerator.DIFFICULTY_EASY
             }
 
+
+
             generator = thread {
+
 
                 val time = System.currentTimeMillis()
 
@@ -312,20 +316,20 @@ class MainActivity : AppCompatActivity() {
                 println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
 
                 runOnUiThread{
+                    setContentView(R.layout.working_r_view)
+                    getControlNumbers()
                     showTable(table!!)
                     selectedView = null
                     updateController()
-                    progress_layout.visibility = View.GONE
+                    progress_bar.visibility = View.GONE
                     generator = null
 
                 }
             }
 
-            progress_layout.visibility = View.VISIBLE
+            progress_bar.visibility = View.VISIBLE
         }
 
     }
-
-
 
 }
