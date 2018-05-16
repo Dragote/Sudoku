@@ -2,6 +2,7 @@ package io.cyanlab.loinasd.sudoku
 
 import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
 import io.cyanlab.loinasd.sudoku.models.games.AsteriskTable
+import io.cyanlab.loinasd.sudoku.models.games.Table
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -20,9 +21,8 @@ class ExampleUnitTest {
     @Test
     fun tgTest(){
 
-        val table = TableGenerator(AsteriskTable()).generateTable(TableGenerator.DIFFICULTY_EASY)
+        assertEquals("111111111111111111111111111111111111111111111111111111111111111111111111111111111111111", TableGenerator(Table()).tableToString(Array(9, { y -> IntArray(9, { x -> 1 }) })))
 
-        print("")
 
     }
 }

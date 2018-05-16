@@ -20,15 +20,16 @@
     <color name="MaterialGreen">#C3E88D</color>
     <color name="MaterialDarkerGreen">#91b859</color>
     <color name="MaterialPaleBlue">#B2CCD6</color>
-    <color name="MaterialDarkerPaleBlue">#8796B0</color>
+    <color name="MaterialDarkerPaleBlue">#8796b0</color>
     <color name="MaterialCyan">#89ddff</color>
     <color name="MaterialDarkerCyan">#39ADB5</color>
     <color name="MaterialBlue">#82aaff</color>
-    <color name="MaterialDarkerBlue">#6182B8</color>
+    <color name="MaterialDarkerBlue">#6182b8</color>
     <color name="MaterialPurple">#C792EA</color>
     <color name="MaterialDarkerPurple">#7C4DFF</color>
     <color name="MaterialViolet">#bb80b3</color>
     <color name="MaterialDarkerViolet">#945EB8</color>
     <color name="MaterialBrown">#ab7967</color>
     <color name="MaterialDarkerBrown">#ab7967</color>
+    <color name="WhiteLowAlpha">#bbffffff</color>
 </resources>

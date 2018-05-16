@@ -12,18 +12,14 @@ open class TableGenerator(val sudoku: Table): Loggable {
         val DIFFICULTY_HARD = 81 - 24
     }
 
-    protected open val r: Random = Random()
+    private val r: Random = Random()
 
-    protected open val MAX_METHODS_COUNT = 3
-    protected open val MAX_TRIALS = 20
-    protected open val MAX_TRIALS_FOR_LAST_SQUARE = 20
+    private val MAX_TRIALS = 20
+    private val MAX_TRIALS_FOR_LAST_SQUARE = 20
 
-    open lateinit var penTable: Array<IntArray>
+    private lateinit var penTable: Array<IntArray>
 
-    open val LOGGING = true
-    //val out: ConsoleView = ConsoleView(LOGGING)
-
-    protected lateinit var trials: BooleanArray
+    private lateinit var trials: BooleanArray
 
     fun generateTable(difficulty: Int): Table {
 
@@ -48,7 +44,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
 
     //---------------------------------------------
 
-    protected open fun generate(): Boolean {
+    private fun generate(): Boolean {
 
         sudoku.completeTable = Array(9, { IntArray(9, { j -> 0 }) })
         sudoku.rows = Array(9, { BooleanArray(9, { false }) })
@@ -105,7 +101,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
         } else return false
     }
 
-    protected open fun clearSquare(sqNumber: Int) {
+    private fun clearSquare(sqNumber: Int) {
 
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
@@ -116,7 +112,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
                 //table.completeTable[i][j] = 0
     }
 
-    protected open fun fillSquare(sqNumber: Int, r: Random): Boolean {
+    private fun fillSquare(sqNumber: Int, r: Random): Boolean {
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
 
@@ -132,7 +128,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
     }
 
 
-    protected open fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, sqNumber: Int): Boolean {
+    private fun fillBuffer(buffer: Array<IntArray>, square: BooleanArray, sqNumber: Int): Boolean {
         val offsetX = sqNumber % 3 * 3
         val offsetY = sqNumber / 3 * 3
 
@@ -157,7 +153,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
         return true
     }
 
-    protected open fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int) {
+    private fun pushBuffer(buffer: Array<IntArray>, offsetY: Int, offsetX: Int, sqNumber: Int) {
         for (y in 0..2)
             for (x in 0..2){
                 for (i in sudoku.sectors4Cells[y + offsetY][x + offsetX].indices){
@@ -169,7 +165,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
             }
     }
 
-    protected open fun fillCell(y: Int, x: Int, buffer: Array<IntArray>, flags: BooleanArray, square: BooleanArray): Boolean {
+    private fun fillCell(y: Int, x: Int, buffer: Array<IntArray>, flags: BooleanArray, square: BooleanArray): Boolean {
 
         var count = 0
 
@@ -187,7 +183,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
     }
 
 
-    protected open fun getNumber(flags: BooleanArray, rand: Int): Int {
+    private fun getNumber(flags: BooleanArray, rand: Int): Int {
         if (!flags[rand]) return rand
 
         var number = 0
@@ -207,33 +203,6 @@ open class TableGenerator(val sudoku: Table): Loggable {
         }
     }
 
-    protected open fun getRow(table: Array<IntArray>, y: Int): BooleanArray {
-        val row = BooleanArray(9, { false })
-
-        for (i in 0..8)
-            if (table[y][i] != 0) row[table[y][i] - 1] = true
-        return row
-    }
-
-    protected open fun getColumn(table: Array<IntArray>, x: Int): BooleanArray {
-        val column = BooleanArray(9, { false })
-
-        for (i in 0..8)
-            if (table[i][x] != 0) column[table[i][x] - 1] = true
-        return column
-    }
-
-    private fun getSquare(table: Array<IntArray>, y: Int, x: Int): BooleanArray {
-
-        val square = BooleanArray(9, { false })
-
-        for (ys in (y / 3) * 3 until (y / 3) * 3 + 3)
-            for (xs in (x / 3) * 3 until (x / 3) * 3 + 3)
-                if (table[ys][xs] != 0) square[table[ys][xs] - 1] = true
-
-        return square
-    }
-
     private fun getAreas(areas: BooleanArray, number: Int):Boolean{
         var flag = false
         for (i in areas.indices){
@@ -243,11 +212,11 @@ open class TableGenerator(val sudoku: Table): Loggable {
     }
 
 
-    protected var pointerNumber = 0
-    protected var pointerY = 0
-    protected var pointerX = 0
+    private var pointerNumber = 0
+    private var pointerY = 0
+    private var pointerX = 0
 
-    fun puzzleTable(difficulty: Int) {
+    private fun puzzleTable(difficulty: Int) {
 
         var count = difficulty
 
@@ -279,6 +248,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
             nullCell(y, x)
 
             if ((count < 20 || count % 3 == 0) && findFirst(penTable) != 1) {
+
                 restoreCell(y, x)
             } else {
                 count--
@@ -305,7 +275,18 @@ open class TableGenerator(val sudoku: Table): Loggable {
 
     }
 
-    protected open fun nullCell(y: Int, x: Int) {
+    fun tableToString(table: Array<IntArray>): String{
+
+        val builder = StringBuilder()
+
+        for (y in table.indices)
+            for (x in table[y].indices)
+                builder.append(table[y][x])
+
+        return builder.toString()
+    }
+
+    private fun nullCell(y: Int, x: Int) {
 
         pointerNumber = penTable[y][x]
 
@@ -327,7 +308,8 @@ open class TableGenerator(val sudoku: Table): Loggable {
         trials[y * 9 + x] = true
     }
 
-    protected open fun restoreCell(y: Int, x: Int) {
+    private fun restoreCell(y: Int, x: Int) {
+
         penTable[y][x] = pointerNumber
 
         sudoku.rows[y][pointerNumber - 1] = true
@@ -357,10 +339,11 @@ open class TableGenerator(val sudoku: Table): Loggable {
 
         var sum = 0
 
-        val flags = getPossibleNumbers(y, x)
+        val flags = sudoku.getPossibleNumbers(y, x)
 
         for (i in flags.indices) {
             if (!flags[i]) {
+
                 fakeCell(table, y, x, i)
                 sum += findFirst(table)
                 reFakeCell(table, y, x, i)
@@ -370,24 +353,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
         return sum
     }
 
-    protected open fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
-
-        val flags = BooleanArray(9, { i -> sudoku.squares[(y / 3) * 3 + x / 3][i] || sudoku.rows[y][i] || sudoku.columns[x][i] })
-
-        val areas = sudoku.sectors4Cells[y][x]
-
-        for (i in 0 until areas.size){
-            if (areas[i]){
-                for (j in 0 until 9){
-                    flags[j] = flags[j] || sudoku.sectors[i][j]
-                }
-            }
-        }
-
-        return flags
-    }
-
-    protected open fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+    private fun fakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
 
         sudoku.rows[y][number] = true
         sudoku.columns[x][number] = true
@@ -403,7 +369,7 @@ open class TableGenerator(val sudoku: Table): Loggable {
         }
     }
 
-    protected open fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
+    private fun reFakeCell(table: Array<IntArray>, y: Int, x: Int, number: Int) {
 
         table[y][x] = 0
         sudoku.rows[y][number] = false
