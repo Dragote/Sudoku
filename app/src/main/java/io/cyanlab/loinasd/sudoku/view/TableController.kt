@@ -2,6 +2,7 @@ package io.cyanlab.loinasd.sudoku.view
 
 import android.app.Activity
 import android.graphics.Point
+import android.graphics.drawable.Drawable
 import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.AppCompatTextView
 import android.view.Gravity
@@ -179,30 +180,19 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
 
     fun onCellSelected(view: Cell?){
 
-        if (isCellSelected){
+        /*if (isCellSelected){
             removeSelection()
-        }
+        }*/
 
         if (view == null)
             return
 
-        if (!view.isHidden){
-
-            isNumberHighlighted = true
-
-            highlightNumber(view.number)
-            updateController()
-            return
-        }
-
         selectedView = view
 
-        selectedView?.background = activity.resources.getDrawable(R.drawable.cell_selected)
+        /*selectedView?.background = activity.resources.getDrawable(R.drawable.cell_selected)*/
         isCellSelected = true
 
-        highlightRnC()
-
-        updateController()
+        //highlightRnC()
 
 
     }
@@ -230,17 +220,11 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
         }
     }
 
-    var isNumberHighlighted = false
-
     var highlightedNumber: Int = 1
 
-    fun highlightNumber(number: Int){
+    fun highlightNumber(number: Int, isNumberHighlighted: Boolean){
 
-        highlightedNumber =
-                if (!isNumberHighlighted)
-                    -1
-                else
-                    number
+        highlightedNumber = number
 
         for (y in cells.indices){
             for (cell in cells[y]){
@@ -252,6 +236,14 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
                         cell.defaultBackground
             }
         }
+
+        val res =
+                if (!isNumberHighlighted)
+                    R.drawable.cell_default_dark
+                else
+                    R.drawable.cell_selected
+
+        activity.control?.getChildAt(highlightedNumber - 1)?.background = activity.resources?.getDrawable(res)
 
     }
 
@@ -266,7 +258,7 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
 
         isCellSelected = false
 
-        highlightRnC()
+        //highlightRnC()
 
         selectedView = null
 
@@ -277,49 +269,15 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
     inner class Selector: View.OnClickListener{
 
         override fun onClick(p0: View?) {
+
             if (p0 !is TextView)
                 return
 
-            if (isNumberHighlighted){
-
-                isNumberHighlighted = false
-                highlightNumber(highlightedNumber)
-            }
-
             onCellSelected(p0 as Cell)
-        }
 
-    }
-
-    var isPencil = false
-
-    inner class Controller: View.OnClickListener{
-
-        override fun onClick(p0: View?) {
-
-            val num = activity.control.indexOfChild(p0) + 1
-
-            if (num > 9) {
-
-                onEdit(p0!!)
+            if (selectedView?.isHidden != true){
                 return
             }
-
-            if (isNumberHighlighted){
-
-                isNumberHighlighted = false
-                highlightNumber(highlightedNumber)
-            }
-
-            if (p0 !is TextView || (activity as MainActivity).generator != null)
-                return
-
-            if (selectedView == null){
-                isNumberHighlighted = true
-                highlightNumber(num)
-                return
-            }
-
 
             val selectedNum = parent.indexOfChild(selectedView)
 
@@ -327,26 +285,34 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
             val x = selectedNum % 9
 
             if (!isPencil)
-                onPen(y, x, num)
+                onPen(y, x, highlightedNumber)
             else
-                onPencil(num)
+                onPencil(highlightedNumber)
 
         }
 
         fun onPencil(num: Int){
 
+            val res: Drawable?
+
             if (selectedView?.pencil?.contains(num) != true){
 
                 selectedView?.pencil?.add(num)
 
-            } else
+                res = activity.resources?.getDrawable(R.drawable.cell_highlighted)
+
+            } else{
                 selectedView?.pencil?.remove(num)
+
+                res = selectedView?.defaultBackground
+            }
+
+            selectedView?.background = res
 
 
             //editPencilText(num)
 
             selectedView?.invalidate()
-            updateController()
 
         }
 
@@ -358,6 +324,7 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
                 selectedView?.textSize = 18f
                 table.cellEntered(y, x)
 
+                selectedView?.background = activity.resources?.getDrawable(R.drawable.cell_highlighted)
                 selectedView?.isHidden = false
                 selectedView?.pencil?.removeAll(selectedView?.pencil!!)
                 onCellSelected(selectedView)
@@ -378,11 +345,43 @@ class TableController(val activity: Activity, val parent: android.support.v7.wid
             }
         }
 
+    }
+
+    var isPencil = false
+
+    inner class Controller: View.OnClickListener{
+
+        override fun onClick(p0: View?) {
+
+            val num = activity.control.indexOfChild(p0) + 1
+
+            /*if (isCellSelected)
+                removeSelection()*/
+
+            if (num > 9) {
+
+                onEdit(p0!!)
+                return
+            }
+
+            if (p0 !is TextView || (activity as MainActivity).generator != null)
+                return
+
+            if (num != highlightedNumber)
+                highlightNumber(highlightedNumber, false)
+
+            highlightNumber(num, true)
+
+
+
+
+        }
+
+
+
         fun onEdit(edit: View){
 
             isPencil = !isPencil
-
-            updateController()
 
             edit.background = activity.resources.getDrawable(if (!isPencil) R.drawable.cell_default_dark else R.drawable.cell_selected)
 

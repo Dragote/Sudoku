@@ -71,8 +71,6 @@ class MainActivity : AppCompatActivity() {
 
         override fun onClick(p0: View?) {
 
-            p0?.setBackgroundColor(Color.GREEN)
-
             if (generator != null)
                 return
 
