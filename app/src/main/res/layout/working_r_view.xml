@@ -10,29 +10,33 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        tools:layout_editor_absoluteY="56dp" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/main_grid" />
 
     <View
         android:id="@+id/divider_ver_1"
         android:layout_width="2dp"
         android:layout_height="250dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        tools:layout_editor_absoluteX="180dp"
-        tools:layout_editor_absoluteY="56dp" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="180dp" />
 
     <View
         android:id="@+id/divider_ver_2"
         android:layout_width="2dp"
         android:layout_height="250dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        tools:layout_editor_absoluteY="56dp" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/main_grid" />
 
     <View
         android:id="@+id/divider_hor_2"
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:background="@color/MaterialDarkerPaleBlue"
-        tools:layout_editor_absoluteY="56dp" />
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/main_grid" />
 
     <android.support.v7.widget.GridLayout
         android:id="@+id/control"
@@ -47,11 +51,12 @@
         android:id="@+id/main_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
         android:animateLayoutChanges="true"
         app:columnCount="9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="56dp">
+        app:layout_constraintTop_toTopOf="parent">
 
     </android.support.v7.widget.GridLayout>
 

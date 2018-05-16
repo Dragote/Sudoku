@@ -21,6 +21,7 @@
     <color name="MaterialDarkerGreen">#91b859</color>
     <color name="MaterialPaleBlue">#B2CCD6</color>
     <color name="MaterialDarkerPaleBlue">#8796b0</color>
+    <color name="MaterialDarkerPaleBlueLA">#918796b0</color>
     <color name="MaterialCyan">#89ddff</color>
     <color name="MaterialDarkerCyan">#39ADB5</color>
     <color name="MaterialBlue">#82aaff</color>
