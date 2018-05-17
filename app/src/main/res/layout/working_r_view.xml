@@ -42,8 +42,8 @@
         android:id="@+id/control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:columnCount="5"
-        android:background="@color/MaterialBlue"
+        android:layout_marginBottom="32dp"
+        app:columnCount="6"
         app:layout_constraintBottom_toBottomOf="parent">
 
     </android.support.v7.widget.GridLayout>
@@ -54,8 +54,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:animateLayoutChanges="true"
-        android:background="@color/MaterialDarkerRed"
-        android:minHeight="150dp"
         app:columnCount="9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

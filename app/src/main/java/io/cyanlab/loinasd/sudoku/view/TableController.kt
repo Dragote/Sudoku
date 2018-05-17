@@ -1,89 +1,64 @@
 package io.cyanlab.loinasd.sudoku.view
 import android.content.Context
 import android.graphics.Point
-import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
-import android.view.Gravity
-import android.view.View
-import android.view.WindowManager
+import android.support.annotation.DrawableRes
+import android.view.*
+import android.widget.GridLayout
 import android.widget.ImageView
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.Cell
 import io.cyanlab.loinasd.sudoku.models.Sector
 import io.cyanlab.loinasd.sudoku.models.games.Table
-import android.support.v7.widget.GridLayout
 
-class TableController(var context: Context, val parent: GridLayout, val control: GridLayout, val table: Table) {
+class TableController(val context: Context, val parent: android.support.v7.widget.GridLayout, val control: android.support.v7.widget.GridLayout, val table: Table) {
 
-    val margin = 5
+    private val margin = 5
 
-    val cells: Array<Array<Cell>>
-    val sectors: Array<Sector>
+    private val cells: Array<Cell> = Array(81, {number ->
 
-    val selector = Selector()
-    val controller = Controller()
+        val y = number / 9
+        val x = number % 9
 
-    init {
+        val cell = Cell(this)
 
-        val size = Point()
+        cell.text = if (table.penTable[y][x])
+            "${table.completeTable[y][x]}"
+        else
+            ""
 
+        cell.textSize = 18f
 
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
+        cell.gravity = Gravity.CENTER
 
-        cells = Array(9,
-                {y -> Array(9, { x ->
+        cell
+    })
 
-                    val tv = Cell(context, table.completeTable[y][x], !table.penTable[y][x], x, y)
+    private val sectors: Array<Sector> = Array(table.sectors.size, {sector ->
+        Sector(Array(9, { i ->
 
-                    tv.isHidden = !table.penTable[y][x]
+            val y = table.sectorsCoords[sector][i][0]
+            val x = table.sectorsCoords[sector][i][1]
 
-                    tv.text = if (table.penTable[y][x])
-                        "${table.completeTable[y][x]}"
-                    else
-                        ""
+            cells[number(y, x)]
+        }))
+    })
 
-                    tv.textSize = 18f
+    private val selector = Selector()
+    private val controller = Controller()
 
-                    tv.gravity = Gravity.CENTER
-                    tv.setOnClickListener(selector)
+    private fun square(number: Int) = Array(9, { i ->
 
-                    tv
-                })})
+        val y = number / 3 * 3 + i / 3
+        val x = number % 3 * 3 + i % 3
 
-        for (i in 0 until 9){
+        cells[number(y,x)]})
 
-            for (cell in square(i)){
-                if (i % 2 != 0){
-                    cell.defaultBackground = context.resources.getDrawable(R.drawable.cell_default_dark)
-                }else
-                    cell.defaultBackground = context.resources.getDrawable(R.drawable.cell_default)
+    fun number(y: Int, x: Int) = y * 9 + x
 
-                cell.background = cell.defaultBackground
-            }
-        }
-
-        if (parent.childCount != 0){
-
-            parent.removeAllViews()
-        }
-
-        sectors = Array(table.sectors.size, {sector ->
-            Sector(Array(9, { i ->
-
-                val y = table.sectorsCoords[sector][i][0]
-                val x = table.sectorsCoords[sector][i][1]
-
-                cells[y][x]
-            }))
-        })
-    }
-
-    fun row(y: Int) = cells[y]
-
-    fun column(x: Int) = Array(9, {i -> cells[i][x]})
-
-    fun square(number: Int) = Array(9, {i -> cells[number / 3 * 3 + i / 3][number % 3 * 3 + i % 3]})
+    fun y (number: Int) = number / 9
+    fun x (number: Int) = number % 9
 
     fun showTable() {
 
@@ -99,28 +74,46 @@ class TableController(var context: Context, val parent: GridLayout, val control:
         params.height = width
         params.setMargins(margin, margin, margin, margin)
 
-        /*context.divider_ver_1.layoutParams.height = size.x
-        context.divider_ver_2.layoutParams.height = size.x
+        colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default)
 
-        context.divider_ver_1.x = size.x / 3f - margin / 3f
-        context.divider_ver_2.x = 2 * size.x / 3f - margin/ 3f
+        if (parent.childCount != 0){
 
-        context.divider_hor_1.y += size.x / 3f - margin / 3f
-        context.divider_hor_2.y += 2 * size.x / 3f - margin /3f*/
-
-
-        for (y in 0 until 9) {
-            for (x in 0 until 9){
-
-                parent.addView(cells[y][x], params)
-            }
-
+            parent.removeAllViews()
         }
 
-        parent.refreshDrawableState()
+        //val detector = GestureDetector(context, DoubleClickListener())
 
-        selectedView = null
-        //updateController()
+
+        for (number in 0 until cells.size){
+            cells[number].setOnClickListener(selector)
+
+            /*cells[number].setOnTouchListener { view, motionEvent ->
+
+                if (isPencil && view is Cell){
+                    detector.onTouchEvent(motionEvent)
+                }
+
+                false
+            }*/
+
+            parent.addView(cells[number], params)
+        }
+
+    }
+
+    private fun colorSquares(@DrawableRes res1: Int, @DrawableRes res2: Int){
+
+        for (i in 0 until 9){
+
+            for (cell in square(i)){
+                if (i % 2 != 0){
+                    cell.defaultBackground = context.resources.getDrawable(res1)
+                }else
+                    cell.defaultBackground = context.resources.getDrawable(res2)
+
+                cell.background = cell.defaultBackground
+            }
+        }
     }
 
     fun getControlNumbers(){
@@ -131,97 +124,54 @@ class TableController(var context: Context, val parent: GridLayout, val control:
 
         (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
 
-        val width = size.x/5 - margin * 2
+        val width = size.x/6 - margin * 2 * 2
 
         params.width = width
         params.height = width
-        params.setMargins(margin, margin, margin, margin)
+        params.setMargins(margin * 2, margin * 2, margin * 2, margin * 2)
 
         for (i in 1 until 10) {
-            val tv = TextView(parent.context)
+            val controlNum = TextView(context)
 
-            tv.text = "$i"
-            tv.textSize = 24f
+            controlNum.text = "$i"
+            controlNum.textSize = 24f
 
-            tv.gravity = Gravity.CENTER
-            tv.setOnClickListener(controller)
-            control.addView(tv, params)
+            controlNum.gravity = Gravity.CENTER
+            controlNum.setOnClickListener(controller)
+
+            controlNum.background = context.resources.getDrawable(R.drawable.cell_default_dark)
+
+            control.addView(controlNum, params)
         }
 
-
+        println(context)
 
         val edit = ImageView(context)
-        val bd: BitmapDrawable = BitmapDrawable()
-        val im = context.resources?.getDrawable(R.drawable.ic_launcher_foreground)
-        edit.setImageDrawable(im)
+
+        edit.setImageDrawable(context.resources?.getDrawable(R.drawable.ic_edit_black))
+
         edit.background = context.resources.getDrawable(R.drawable.cell_default_dark)
+
+
         edit.setOnClickListener(controller)
 
         control.addView(edit, params)
-    }
-
-    fun updateController(){
-
-        if (selectedView == null || !isPencil){
-
-            for (i in 0 until control.childCount - 1){
-                control.getChildAt(i).background = context.resources.getDrawable(R.drawable.cell_default_dark)
-            }
-            return
-        }
-
-        val num = parent.indexOfChild(selectedView)
-
-        val y = num / 9
-        val x = num % 9
-
-        for (i in 0 until 9){
-
-            control.getChildAt(i).background = context.resources.getDrawable(if (selectedView?.pencil?.contains(i + 1) == true) R.drawable.cell_default else R.drawable.cell_default_dark)
-
-        }
-    }
-
-    fun onCellSelected(view: Cell?){
-
-        /*if (isCellSelected){
-            removeSelection()
-        }*/
-
-        if (view == null)
-            return
-
-        selectedView = view
-
-        /*selectedView?.background = activity.resources.getDrawable(R.drawable.cell_selected)*/
-        isCellSelected = true
-
-        //highlightRnC()
-
 
     }
 
-    private fun highlightRnC(){
+    fun getPossibleNumbers(cell: Cell): BooleanArray{
 
+        val number = cells.indexOf(cell)
+        return table.getPossibleNumbers(y(number), x(number))
+    }
 
-        for (cell in row(selectedView?.y!!)){
-            if (cell != selectedView){
-                cell.background = if (isCellSelected)
+    fun getPencil(cell: Cell) = table.pencil[cells.indexOf(cell)]
 
-                    context.resources.getDrawable(R.drawable.cell_highlighted)
-                else
-                    cell.defaultBackground
-            }
-        }
-        for (cell in column(selectedView?.x!!)){
-            if (cell != selectedView){
-                cell.background = if (isCellSelected)
+    fun isCellHidden(cell: Cell): Boolean{
 
-                    context.resources.getDrawable(R.drawable.cell_highlighted)
-                else
-                    cell.defaultBackground
-            }
-        }
+        val number = cells.indexOf(cell)
+
+        return !table.penTable[y(number)][x(number)]
     }
 
     var highlightedNumber: Int = 1
@@ -230,15 +180,19 @@ class TableController(var context: Context, val parent: GridLayout, val control:
 
         highlightedNumber = number
 
-        for (y in cells.indices){
-            for (cell in cells[y]){
-                if (cell.number == number && !cell.isHidden || cell.pencil.contains(number))
-                    cell.background = if (isNumberHighlighted)
+        for (index in cells.indices){
 
-                        context.resources.getDrawable(R.drawable.cell_highlighted)
-                    else
-                        cell.defaultBackground
-            }
+            val correct = table.completeTable[y(index)][x(index)]
+
+            val cell = cells[index]
+
+            if (correct == number && !isCellHidden(cell) || getPencil(cell).contains(index))
+
+                cell.background = if (isNumberHighlighted)
+
+                    context.resources.getDrawable(R.drawable.cell_highlighted)
+                else
+                    cell.defaultBackground
         }
 
         val res =
@@ -247,100 +201,70 @@ class TableController(var context: Context, val parent: GridLayout, val control:
                 else
                     R.drawable.cell_selected
 
-        control?.getChildAt(highlightedNumber - 1)?.background = context.resources?.getDrawable(res)
+        control.getChildAt(highlightedNumber - 1)?.background = context.resources?.getDrawable(res)
 
     }
-
-    var selectedView: Cell? = null
-
-    fun removeSelection(){
-
-        if (selectedView == null)
-            return
-
-        selectedView?.background = selectedView?.defaultBackground
-
-        isCellSelected = false
-
-        //highlightRnC()
-
-        selectedView = null
-
-    }
-
-    var isCellSelected = false
 
     inner class Selector: View.OnClickListener{
 
         override fun onClick(p0: View?) {
 
-            if (p0 !is TextView)
+            if (p0 !is Cell)
                 return
 
-            if (isNumberHighlighted){
-
-                isNumberHighlighted = false
-                highlightNumber(highlightedNumber)
-            }
-
-            onCellSelected(p0 as Cell)
-
-            if (selectedView?.isHidden != true){
+            if (!isCellHidden(p0)){
                 return
             }
-
-            val selectedNum = parent.indexOfChild(selectedView)
-
-            val y = selectedNum / 9
-            val x = selectedNum % 9
 
             if (!isPencil)
-                onPen(y, x, highlightedNumber)
+                onPen(p0)
             else
-                onPencil(highlightedNumber)
+                onPencil(p0)
 
         }
 
-        fun onPencil(num: Int){
+        private fun onPencil(cell: Cell){
 
             val res: Drawable?
 
-            if (selectedView?.pencil?.contains(num) != true){
+            val pencil = getPencil(cell)
 
-                selectedView?.pencil?.add(num)
+            res = if (!pencil.contains(highlightedNumber)){
 
-                res = context.resources?.getDrawable(R.drawable.cell_highlighted)
+                pencil.add(highlightedNumber)
+
+                context.resources?.getDrawable(R.drawable.cell_highlighted)
 
             } else{
-                selectedView?.pencil?.remove(num)
+                pencil.remove(highlightedNumber)
 
-                res = selectedView?.defaultBackground
+                cell.defaultBackground
             }
 
-            selectedView?.background = res
+            cell.background = res
 
-
-            //editPencilText(num)
-
-            selectedView?.invalidate()
+            cell.invalidate()
 
         }
 
-        fun onPen(y: Int, x: Int, num: Int){
+        private fun onPen(cell: Cell){
 
-            if (num == table.completeTable[y][x]) {
+            val number = cells.indexOf(cell)
 
-                selectedView?.text = num.toString()
-                selectedView?.textSize = 18f
-                table.cellEntered(y, x)
 
-                selectedView?.background = context.resources?.getDrawable(R.drawable.cell_highlighted)
-                selectedView?.isHidden = false
-                selectedView?.pencil?.removeAll(selectedView?.pencil!!)
-                onCellSelected(selectedView)
+            if (highlightedNumber == table.completeTable[y(number)][x(number)]) {
+
+                cell.text = table.completeTable[y(number)][x(number)].toString()
+
+                table.cellEntered(y(number), x(number))
+
+                cell.background = context.resources?.getDrawable(R.drawable.cell_highlighted)
+
+                val pencil = getPencil(cell)
+                pencil.removeAll(pencil)
             }
 
-            var isFinished = true
+            /*var isFinished = true
 
             for (i in table.penTable.indices) {
                 if (table.penTable[i].contains(false)) {
@@ -349,7 +273,7 @@ class TableController(var context: Context, val parent: GridLayout, val control:
                 }
             }
 
-            /*if (isFinished) {
+            if (isFinished) {
                 context.congr_layout.visibility = View.VISIBLE
                 isComplete = true
             }*/
@@ -365,9 +289,6 @@ class TableController(var context: Context, val parent: GridLayout, val control:
 
             val num = control.indexOfChild(p0) + 1
 
-            /*if (isCellSelected)
-                removeSelection()*/
-
             if (num > 9) {
 
                 onEdit(p0!!)
@@ -378,26 +299,39 @@ class TableController(var context: Context, val parent: GridLayout, val control:
                 return
 
             if (num != highlightedNumber)
+
                 highlightNumber(highlightedNumber, false)
 
             highlightNumber(num, true)
 
-
-
-
         }
 
-        fun onEdit(edit: View){
+        private fun onEdit(edit: View){
 
             isPencil = !isPencil
 
             edit.background = context.resources.getDrawable(if (!isPencil) R.drawable.cell_default_dark else R.drawable.cell_selected)
-
         }
 
     }
 
-    var isComplete = false
+    inner class DoubleClickListener(val cell: Cell): GestureDetector.SimpleOnGestureListener(){
+
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+
+            if (!isPencil){
+                return false
+            }
+
+
+            return false
+        }
+
+        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+            return super.onSingleTapConfirmed(e)
+        }
+
+    }
 
 
 }

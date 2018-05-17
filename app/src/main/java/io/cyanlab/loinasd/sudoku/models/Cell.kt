@@ -4,26 +4,24 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
-import android.support.v4.widget.TextViewCompat
 import android.support.v7.widget.AppCompatTextView
-import android.widget.TextView
-import io.cyanlab.loinasd.sudoku.R
+import io.cyanlab.loinasd.sudoku.models.games.Table
+import io.cyanlab.loinasd.sudoku.view.TableController
 
-class Cell(context: Context, val number: Int, var isHidden: Boolean,
-           val x: Int, val y: Int) : AppCompatTextView(context){
-
-    val pencil = ArrayList<Int>(9)
+class Cell(val controller: TableController) : AppCompatTextView(controller.context){
 
     var defaultBackground: Drawable? = null
 
     override fun onDraw(canvas: Canvas?) {
 
-        if (isHidden){
+        if (controller.isCellHidden(this)){
 
-            var x = 0f
-            var y = 0f
+            val possibles = controller.getPossibleNumbers(this)
+            val pencil = controller.getPencil(this)
+
+            var x: Float
+            var y: Float
 
             val width = canvas?.width ?: return
 
@@ -43,7 +41,7 @@ class Cell(context: Context, val number: Int, var isHidden: Boolean,
 
                 val paint = Paint()
                 paint.textSize = textWidth * 1.7f
-                paint.color = textColors.defaultColor
+                paint.color = if (!possibles[number - 1]) textColors.defaultColor else Color.RED
                 paint.typeface = typeface
 
                 canvas.drawText("$number", x, y, paint)

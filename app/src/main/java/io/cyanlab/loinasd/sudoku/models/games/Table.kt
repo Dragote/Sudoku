@@ -14,6 +14,8 @@ open class Table{
     var sectors : Array<BooleanArray> = emptyArray()
     var sectors4Cells:  Array<Array<BooleanArray>> = emptyArray()
 
+    val pencil = Array(81, { ArrayList<Int>()})
+
     fun getPossibleNumbers(y: Int, x: Int): BooleanArray {
 
         val flags = BooleanArray(9, { i -> squares[(y / 3) * 3 + x / 3][i] || rows[y][i] || columns[x][i] })

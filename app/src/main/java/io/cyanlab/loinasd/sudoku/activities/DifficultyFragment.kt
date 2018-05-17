@@ -1,12 +1,10 @@
 package io.cyanlab.loinasd.sudoku.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import android.widget.TextView
 
@@ -28,7 +26,7 @@ class DifficultyFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         val v = inflater.inflate(R.layout.m_difficulty, container, false)
 
-        val gameModeSelector = GameModeSelector()
+        val gameModeSelector = DifficultySelector()
         val startGameListener = StartGameListener()
         val gameTypeSelector = GameTypeSelector()
 
@@ -108,7 +106,9 @@ class DifficultyFragment : Fragment() {
         override fun onClick(p0: View?) {
 
             when(p0) {
+
                 startNewGame -> {
+
                     if (difficulty == -1)
                         return
                     val data = Bundle()
@@ -116,7 +116,7 @@ class DifficultyFragment : Fragment() {
                     val f = GameFragment()
                     f.arguments = data
 
-                    //fragmentManager.beginTransaction().replace(R.id.fragment, f).commit()
+                    fragmentManager.beginTransaction().replace(R.id.fragment, f).commit()
                 }
                 resumeGame -> {
 
@@ -128,7 +128,7 @@ class DifficultyFragment : Fragment() {
 
     }
 
-    inner class GameModeSelector: View.OnClickListener{
+    inner class DifficultySelector: View.OnClickListener{
 
         private var choosed: TextView? = null
 

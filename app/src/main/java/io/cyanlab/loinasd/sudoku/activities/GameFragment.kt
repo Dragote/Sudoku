@@ -12,6 +12,7 @@ import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.Table
 import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
 import io.cyanlab.loinasd.sudoku.view.TableController
+import kotlinx.android.synthetic.main.working_r_view.*
 import kotlinx.android.synthetic.main.working_r_view.view.*
 import kotlin.concurrent.thread
 
@@ -36,6 +37,24 @@ class GameFragment : Fragment() {
         println(container?.context)
         println(context == container?.context)
 
+
+/*        val time = System.currentTimeMillis()
+
+        val table = TableGenerator(Table()).generateTable(difficulty)
+
+        println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
+
+        controller = TableController(context, v.main_grid, v.control, table)
+
+        controller?.getControlNumbers()
+        controller?.showTable()*/
+
+        return v
+    }
+
+    override fun onStart() {
+        super.onStart()
+
         generator = thread {
 
             val time = System.currentTimeMillis()
@@ -49,7 +68,7 @@ class GameFragment : Fragment() {
             activity.runOnUiThread {
 
 
-                controller = TableController(context, v.main_grid, v.control, table)
+                controller = TableController(context, main_grid, control, table)
 
                 controller?.getControlNumbers()
                 controller?.showTable()
@@ -58,17 +77,6 @@ class GameFragment : Fragment() {
 
 
         }
-/*        val time = System.currentTimeMillis()
-
-        val table = TableGenerator(Table()).generateTable(difficulty)
-
-        println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
-
-        controller = TableController(context, v.main_grid, v.control, table)
-
-        controller?.getControlNumbers()
-        controller?.showTable()*/
-        return v
     }
 
 
