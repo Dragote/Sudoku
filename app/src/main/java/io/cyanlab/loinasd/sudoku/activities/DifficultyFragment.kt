@@ -56,6 +56,7 @@ class DifficultyFragment : Fragment() {
             node.name.setBackgroundColor(0x00000000)
             node.check.setBackgroundColor(0x00000000)
             node.img.setImageDrawable(g.getDrawable(context))
+            node.img.setBackgroundColor(0x00000000)
 
             node.setOnClickListener(gameTypeSelector)
 
