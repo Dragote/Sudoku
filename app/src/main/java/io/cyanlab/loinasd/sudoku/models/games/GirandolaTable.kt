@@ -9,14 +9,14 @@ class GirandolaTable: Table() {
 
             arrayOf(
                     intArrayOf(0, 0),
-                    intArrayOf(1, 1),
-                    intArrayOf(0, 2),
-                    intArrayOf(1, 1),
-                    intArrayOf(1, 1),
-                    intArrayOf(1, 1),
-                    intArrayOf(2, 0),
-                    intArrayOf(1, 1),
-                    intArrayOf(2, 2)
+                    intArrayOf(1, 4),
+                    intArrayOf(0, 8),
+                    intArrayOf(4, 1),
+                    intArrayOf(4, 4),
+                    intArrayOf(4, 7),
+                    intArrayOf(8, 0),
+                    intArrayOf(7, 4),
+                    intArrayOf(8, 8)
             )
     )
 

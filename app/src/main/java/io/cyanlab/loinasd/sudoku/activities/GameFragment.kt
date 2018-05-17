@@ -9,8 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
-import io.cyanlab.loinasd.sudoku.models.games.Table
-import io.cyanlab.loinasd.sudoku.models.games.TableGenerator
+import io.cyanlab.loinasd.sudoku.models.games.*
 import io.cyanlab.loinasd.sudoku.view.TableController
 import kotlinx.android.synthetic.main.working_r_view.*
 import kotlinx.android.synthetic.main.working_r_view.view.*
@@ -59,7 +58,7 @@ class GameFragment : Fragment() {
 
             val time = System.currentTimeMillis()
 
-            val table = TableGenerator(Table()).generateTable(difficulty)
+            val table = TableGenerator(GirandolaTable()).generateTable(difficulty)
 
             println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
 

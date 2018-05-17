@@ -11,10 +11,11 @@ import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.Cell
 import io.cyanlab.loinasd.sudoku.models.Sector
 import io.cyanlab.loinasd.sudoku.models.games.Table
+import kotlinx.android.synthetic.main.working_r_view.view.*
 
 class TableController(val context: Context, val parent: android.support.v7.widget.GridLayout, val control: android.support.v7.widget.GridLayout, val table: Table) {
 
-    private val margin = 5
+    private val margin = 8
 
     private val cells: Array<Cell> = Array(81, {number ->
 
@@ -48,6 +49,9 @@ class TableController(val context: Context, val parent: android.support.v7.widge
     private val selector = Selector()
     private val controller = Controller()
 
+    private fun row(number: Int) = Array(9, {i -> cells[number / 9 * 9 + i]})
+    private fun column(number: Int) = Array(9, {i -> cells[number % 9 + i * 9]})
+
     private fun square(number: Int) = Array(9, { i ->
 
         val y = number / 3 * 3 + i / 3
@@ -76,28 +80,38 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
         colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default)
 
+        colorSectors()
+
         if (parent.childCount != 0){
 
             parent.removeAllViews()
         }
 
-        //val detector = GestureDetector(context, DoubleClickListener())
+        (parent.parent as View).divider_ver_2.layoutParams.height = size.x
+        (parent.parent as View).divider_ver_1.layoutParams.height = size.x
+
+        (parent.parent as View).divider_ver_1.x = size.x / 3f - margin / 3f
+        (parent.parent as View).divider_ver_2.x = 2 * size.x / 3f - margin/ 3f
+
+        (parent.parent as View).divider_hor_1.y += size.x / 3f - margin / 3f
+        (parent.parent as View).divider_hor_2.y += 2 * size.x / 3f - margin /3f
 
 
         for (number in 0 until cells.size){
-            cells[number].setOnClickListener(selector)
+            //cells[number].setOnClickListener(selector)
 
-            /*cells[number].setOnTouchListener { view, motionEvent ->
+            val detector = GestureDetector(context, DoubleClickListener(cells[number]))
 
-                if (isPencil && view is Cell){
-                    detector.onTouchEvent(motionEvent)
-                }
+            cells[number].setOnTouchListener { view, motionEvent ->
 
-                false
-            }*/
+                detector.onTouchEvent(motionEvent)
+            }
 
             parent.addView(cells[number], params)
         }
+
+        highlightedNumber = 1
+        highlightNumber(highlightedNumber, true)
 
     }
 
@@ -112,6 +126,25 @@ class TableController(val context: Context, val parent: android.support.v7.widge
                     cell.defaultBackground = context.resources.getDrawable(res2)
 
                 cell.background = cell.defaultBackground
+            }
+        }
+    }
+
+    private fun colorSectors(){
+
+        val colors = arrayOf(
+                context.resources?.getDrawable(R.color.MaterialDarkerCyan),
+                context.resources?.getDrawable(R.color.MaterialDarkerViolet),
+                context.resources?.getDrawable(R.color.MaterialDarkerYellow),
+                context.resources?.getDrawable(R.color.MaterialDarkerRed)
+        )
+
+        for (sector in sectors){
+
+            sector.cells.forEach {
+
+                it.defaultBackground = colors[sectors.indexOf(sector)]
+                it.background = it.defaultBackground
             }
         }
     }
@@ -150,7 +183,7 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
         edit.setImageDrawable(context.resources?.getDrawable(R.drawable.ic_edit_black))
 
-        edit.background = context.resources.getDrawable(R.drawable.cell_default_dark)
+        edit.background = context.resources.getDrawable(R.drawable.cell_selected)
 
 
         edit.setOnClickListener(controller)
@@ -174,7 +207,34 @@ class TableController(val context: Context, val parent: android.support.v7.widge
         return !table.penTable[y(number)][x(number)]
     }
 
+    fun removePencil(cell: Cell){
+
+        val neighbours = ArrayList<Cell>()
+        val number = cells.indexOf(cell)
+
+        neighbours.addAll(row(number))
+        neighbours.addAll(column(number))
+        neighbours.addAll(square(number / 27 * 3 + (number % 9) / 3))
+        for (sector in sectors){
+
+            if (sector.cells.contains(cell)){
+                neighbours.addAll(sector.cells)
+            }
+        }
+
+        for (neighbour in neighbours){
+
+            if (isCellHidden(neighbour) && getPencil(neighbour).contains(table.completeTable[y(number)][x(number)])){
+
+                getPencil(neighbour).remove(table.completeTable[y(number)][x(number)])
+                neighbour.background = neighbour.defaultBackground
+                neighbour.invalidate()
+            }
+        }
+    }
+
     var highlightedNumber: Int = 1
+
 
     fun highlightNumber(number: Int, isNumberHighlighted: Boolean){
 
@@ -186,11 +246,11 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
             val cell = cells[index]
 
-            if (correct == number && !isCellHidden(cell) || getPencil(cell).contains(index))
+            if (correct == number && !isCellHidden(cell) || getPencil(cell).contains(number))
 
                 cell.background = if (isNumberHighlighted)
 
-                    context.resources.getDrawable(R.drawable.cell_highlighted)
+                    context.resources.getDrawable(R.drawable.cell_selected)
                 else
                     cell.defaultBackground
         }
@@ -209,79 +269,11 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
         override fun onClick(p0: View?) {
 
-            if (p0 !is Cell)
-                return
-
-            if (!isCellHidden(p0)){
-                return
-            }
-
-            if (!isPencil)
-                onPen(p0)
-            else
-                onPencil(p0)
-
-        }
-
-        private fun onPencil(cell: Cell){
-
-            val res: Drawable?
-
-            val pencil = getPencil(cell)
-
-            res = if (!pencil.contains(highlightedNumber)){
-
-                pencil.add(highlightedNumber)
-
-                context.resources?.getDrawable(R.drawable.cell_highlighted)
-
-            } else{
-                pencil.remove(highlightedNumber)
-
-                cell.defaultBackground
-            }
-
-            cell.background = res
-
-            cell.invalidate()
-
-        }
-
-        private fun onPen(cell: Cell){
-
-            val number = cells.indexOf(cell)
-
-
-            if (highlightedNumber == table.completeTable[y(number)][x(number)]) {
-
-                cell.text = table.completeTable[y(number)][x(number)].toString()
-
-                table.cellEntered(y(number), x(number))
-
-                cell.background = context.resources?.getDrawable(R.drawable.cell_highlighted)
-
-                val pencil = getPencil(cell)
-                pencil.removeAll(pencil)
-            }
-
-            /*var isFinished = true
-
-            for (i in table.penTable.indices) {
-                if (table.penTable[i].contains(false)) {
-                    isFinished = false
-                    break
-                }
-            }
-
-            if (isFinished) {
-                context.congr_layout.visibility = View.VISIBLE
-                isComplete = true
-            }*/
         }
 
     }
 
-    var isPencil = false
+    var isPencil = true
 
     inner class Controller: View.OnClickListener{
 
@@ -317,18 +309,89 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
     inner class DoubleClickListener(val cell: Cell): GestureDetector.SimpleOnGestureListener(){
 
-        override fun onDoubleTap(e: MotionEvent?): Boolean {
+        override fun onDown(e: MotionEvent?): Boolean {
 
-            if (!isPencil){
-                return false
+            if (!isCellHidden(cell)){
+                return true
             }
 
+            if (!isPencil)
+                onPen(cell)
+            else
+                onPencil(cell)
 
-            return false
+            return true
         }
 
-        override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
-            return super.onSingleTapConfirmed(e)
+        override fun onDoubleTap(e: MotionEvent?): Boolean {
+
+            if (!isPencil || !isCellHidden(cell)){
+                return true
+            }
+
+            onPen(cell)
+
+            return true
+        }
+
+
+        private fun onPencil(cell: Cell){
+
+            val res: Drawable?
+
+            val pencil = getPencil(cell)
+
+            res = if (!pencil.contains(highlightedNumber)){
+
+                pencil.add(highlightedNumber)
+
+                context.resources?.getDrawable(R.drawable.cell_selected)
+
+            } else{
+                pencil.remove(highlightedNumber)
+
+                cell.defaultBackground
+            }
+
+            cell.background = res
+
+            cell.invalidate()
+
+        }
+
+        private fun onPen(cell: Cell){
+
+            val number = cells.indexOf(cell)
+
+
+            if (highlightedNumber != table.completeTable[y(number)][x(number)]) {
+
+                return
+            }
+
+            cell.text = table.completeTable[y(number)][x(number)].toString()
+
+            table.cellEntered(y(number), x(number))
+
+            cell.background = context.resources?.getDrawable(R.drawable.cell_selected)
+
+            getPencil(cell).clear()
+
+            removePencil(cell)
+
+            /*var isFinished = true
+
+            for (i in table.penTable.indices) {
+                if (table.penTable[i].contains(false)) {
+                    isFinished = false
+                    break
+                }
+            }
+
+            if (isFinished) {
+                context.congr_layout.visibility = View.VISIBLE
+                isComplete = true
+            }*/
         }
 
     }

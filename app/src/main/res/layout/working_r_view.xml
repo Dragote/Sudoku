@@ -5,39 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--<View
-        android:id="@+id/divider_hor_1"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/MaterialDarkerPaleBlue"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/main_grid" />
-
-    <View
-        android:id="@+id/divider_ver_1"
-        android:layout_width="2dp"
-        android:layout_height="250dp"
-        android:background="@color/MaterialDarkerPaleBlue"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/main_grid"
-        tools:layout_editor_absoluteX="180dp" />
-
-    <View
-        android:id="@+id/divider_ver_2"
-        android:layout_width="2dp"
-        android:layout_height="250dp"
-        android:background="@color/MaterialDarkerPaleBlue"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/main_grid" />
-
-    <View
-        android:id="@+id/divider_hor_2"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/MaterialDarkerPaleBlue"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/main_grid" />-->
-
     <android.support.v7.widget.GridLayout
         android:id="@+id/control"
         android:layout_width="match_parent"
@@ -61,21 +28,56 @@
 
     </android.support.v7.widget.GridLayout>
 
-<!--    <RelativeLayout
-        android:id="@+id/congr_layout"
+    <View
+        android:id="@+id/divider_hor_1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/WhiteLowAlpha"
-        android:visibility="gone"
-        tools:layout_editor_absoluteY="56dp">
+        android:layout_height="2dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Congratulations!"
-            android:textColor="@color/MaterialDarkerGreen"
-            android:textSize="30sp" />
-    </RelativeLayout>-->
+    <View
+        android:id="@+id/divider_ver_1"
+        android:layout_width="2dp"
+        android:layout_height="250dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="180dp" />
+
+    <View
+        android:id="@+id/divider_ver_2"
+        android:layout_width="2dp"
+        android:layout_height="250dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="386dp" />
+
+    <View
+        android:id="@+id/divider_hor_2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="388dp" />
+
+    <!--    <RelativeLayout
+            android:id="@+id/congr_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/WhiteLowAlpha"
+            android:visibility="gone"
+            tools:layout_editor_absoluteY="56dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Congratulations!"
+                android:textColor="@color/MaterialDarkerGreen"
+                android:textSize="30sp" />
+        </RelativeLayout>-->
 
 </android.support.constraint.ConstraintLayout>
