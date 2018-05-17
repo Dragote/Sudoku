@@ -6,5 +6,5 @@
         android:color="@color/MaterialDarkerBlue"
         android:width="1dp"/>
     <corners
-        android:radius="2dp"/>
+        android:radius="4dp"/>
 </shape>
