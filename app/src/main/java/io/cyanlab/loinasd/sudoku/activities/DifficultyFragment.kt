@@ -1,12 +1,10 @@
 package io.cyanlab.loinasd.sudoku.activities
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.GridLayout
 import android.widget.TextView
 
@@ -58,6 +56,7 @@ class DifficultyFragment : Fragment() {
             node.name.setBackgroundColor(0x00000000)
             node.check.setBackgroundColor(0x00000000)
             node.img.setImageDrawable(g.getDrawable(context))
+            node.img.setBackgroundColor(0x00000000)
 
             node.setOnClickListener(gameTypeSelector)
 
