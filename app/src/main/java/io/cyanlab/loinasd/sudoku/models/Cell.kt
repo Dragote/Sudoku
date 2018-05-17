@@ -11,8 +11,8 @@ import android.support.v7.widget.AppCompatTextView
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 
-class Cell(val activity: Context, val number: Int, var isHidden: Boolean,
-           val x: Int, val y: Int) : AppCompatTextView(activity){
+class Cell(context: Context, val number: Int, var isHidden: Boolean,
+           val x: Int, val y: Int) : AppCompatTextView(context){
 
     val pencil = ArrayList<Int>(9)
 

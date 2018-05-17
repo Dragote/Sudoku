@@ -26,7 +26,8 @@
             android:layout_margin="@dimen/main_menu_margin"
             android:gravity="center"
             android:padding="@dimen/main_menu_padding"
-            android:text="START GAME" />
+            android:text="START GAME"
+            android:textColor="@color/MaterialDarkerOrange" />
 
         <TextView
             android:id="@+id/stat"
@@ -35,7 +36,8 @@
             android:layout_margin="@dimen/main_menu_margin"
             android:gravity="center"
             android:padding="@dimen/main_menu_padding"
-            android:text="STATISTICS" />
+            android:text="STATISTICS"
+            android:textColor="@color/MaterialYellow" />
 
         <TextView
             android:id="@+id/settings"
@@ -44,16 +46,18 @@
             android:layout_margin="@dimen/main_menu_margin"
             android:gravity="center"
             android:padding="@dimen/main_menu_padding"
-            android:text="SETTINGS" />
+            android:text="SETTINGS"
+            android:textColor="@color/MaterialDarkerGreen" />
 
         <TextView
             android:id="@+id/about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/main_menu_margin"
+            android:gravity="center"
             android:padding="@dimen/main_menu_padding"
             android:text="ABOUT"
-            android:gravity="center" />
+            android:textColor="@color/MaterialBlue" />
     </LinearLayout>
 
     <TextView
