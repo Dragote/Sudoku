@@ -1,19 +1,15 @@
 package io.cyanlab.loinasd.sudoku.activities
 
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.*
-import io.cyanlab.loinasd.sudoku.view.TableController
-import kotlinx.android.synthetic.main.progress_bar.*
+import io.cyanlab.loinasd.sudoku.controller.SudokuController
 import kotlinx.android.synthetic.main.working_r_view.*
-import kotlinx.android.synthetic.main.working_r_view.view.*
 import kotlin.concurrent.thread
 
 
@@ -21,7 +17,7 @@ class GameFragment : Fragment() {
 
     var generator: Thread? = null
     var difficulty = -1
-    var controller: TableController? = null
+    var controller: SudokuController? = null
     var game: Game? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,7 +42,7 @@ class GameFragment : Fragment() {
 
         println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
 
-        controller = TableController(context, v.main_grid, v.control, table)
+        controller = SudokuController(context, v.main_grid, v.control, table)
 
         controller?.getControlNumbers()
         controller?.showTable()*/
@@ -83,10 +79,18 @@ class GameFragment : Fragment() {
             activity.runOnUiThread {
 
 
-                controller = TableController(context, main_grid, control, table)
+                controller = SudokuController(context, main_grid, control, null, table)
 
-                controller?.getControlNumbers()
-                controller?.showTable()
+                val size = main_grid.measuredWidth
+                val margin = 8
+
+                val cellWidth = (size - margin * 4)/9 - margin * 2
+                val numberWidth = size/9 - margin * 2 * 2
+
+                controller?.getControlNumbers(numberWidth, margin)
+                controller?.showTable(cellWidth, margin)
+
+
                 include.visibility = View.GONE
             }
 

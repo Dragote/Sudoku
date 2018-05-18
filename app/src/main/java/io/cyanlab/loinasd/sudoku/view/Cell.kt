@@ -1,15 +1,13 @@
-package io.cyanlab.loinasd.sudoku.models
+package io.cyanlab.loinasd.sudoku.view
 
-import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatTextView
-import io.cyanlab.loinasd.sudoku.models.games.Table
-import io.cyanlab.loinasd.sudoku.view.TableController
+import io.cyanlab.loinasd.sudoku.controller.SudokuController
 
-class Cell(val controller: TableController) : AppCompatTextView(controller.context){
+class Cell(val controller: SudokuController) : AppCompatTextView(controller.context){
 
     var defaultBackground: Drawable? = null
 
