@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-        supportFragmentManager.beginTransaction().replace(R.id.fragment, MainMenuFragment()).commitNow()
+        supportFragmentManager.beginTransaction().add(R.id.fragment, MainMenuFragment()).commitNow()
 
     }
 

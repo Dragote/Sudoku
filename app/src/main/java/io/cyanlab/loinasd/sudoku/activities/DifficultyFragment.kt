@@ -1,5 +1,7 @@
 package io.cyanlab.loinasd.sudoku.activities
 
+import android.app.Activity
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.view.LayoutInflater
@@ -18,9 +20,15 @@ import kotlinx.android.synthetic.main.m_difficulty.view.*
 
 class DifficultyFragment : Fragment() {
 
+    companion object {
+
+        const val KEY_STRING_RECENT_GAME = "Recent game"
+        const val PREFS_KEY_RECENT_GAME = "Recent game"
+    }
 
     var difficulty = -1
     var game: Game? = null
+    var isRecent = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,7 +58,7 @@ class DifficultyFragment : Fragment() {
 
         params.setMargins(margin, margin, margin, margin)
 
-        for (g in Game.values()){
+        for (g in Game.values()) {
             val node = inflater.inflate(R.layout.game_node, games, false)
             node.name.text = g.getGameName()
             node.name.setBackgroundColor(0x00000000)
@@ -67,17 +75,24 @@ class DifficultyFragment : Fragment() {
         v.startNewGame.setOnClickListener(startGameListener)
         v.resumeGame.setOnClickListener(startGameListener)
 
+        val prefs = context.getSharedPreferences(PREFS_KEY_RECENT_GAME, Activity.MODE_PRIVATE)
+        isRecent = prefs.getBoolean(GameFragment.PREFS_IS_RECENT, false)
+        if (isRecent)
+            v.resumeGame.isEnabled = true
+
         return v
     }
 
     fun checkButtons() {
-        if (difficulty != -1 && game != null){
+        if (difficulty != -1 && game != null) {
             startNewGame.isEnabled = true
-            resumeGame.isEnabled = true
         }
+
+        if (isRecent)
+            resumeGame.isEnabled = true
     }
 
-    inner class GameTypeSelector: View.OnClickListener{
+    inner class GameTypeSelector : View.OnClickListener {
 
         open var choosed: View? = null
         override fun onClick(p0: View?) {
@@ -93,7 +108,7 @@ class DifficultyFragment : Fragment() {
             checkButtons()
         }
 
-        fun findGame(name: String): Game{
+        fun findGame(name: String): Game {
             for (g in Game.values())
                 if (g.getGameName() == name)
                     return g
@@ -103,40 +118,45 @@ class DifficultyFragment : Fragment() {
 
     }
 
-    inner class StartGameListener : View.OnClickListener{
+    inner class StartGameListener : View.OnClickListener {
         override fun onClick(p0: View?) {
 
-            when(p0) {
+            val data = Bundle()
+            data.putInt("Difficulty", difficulty)
+
+            when (p0) {
 
                 startNewGame -> {
 
                     if (difficulty == -1)
                         return
-                    val data = Bundle()
-                    data.putInt("Difficulty", difficulty)
                     data.putSerializable("Game", game)
-                    val f = GameFragment()
-                    f.arguments = data
+                    data.putBoolean(KEY_STRING_RECENT_GAME, false)
 
-                    fragmentManager.beginTransaction().replace(R.id.fragment, f).commit()
                 }
                 resumeGame -> {
 
+                    data.putBoolean(KEY_STRING_RECENT_GAME, true)
                 }
                 else -> return
             }
+
+            val f = GameFragment()
+            f.arguments = data
+
+            fragmentManager.beginTransaction().replace(R.id.fragment, f).commit()
 
         }
 
     }
 
-    inner class DifficultySelector: View.OnClickListener{
+    inner class DifficultySelector : View.OnClickListener {
 
         private var choosed: TextView? = null
 
         override fun onClick(p0: View?) {
 
-            when(p0) {
+            when (p0) {
                 easy -> {
                     if (choosed != null)
                         choosed?.setTextColor(resources.getColor(R.color.WhiteLowAlpha))
@@ -165,3 +185,4 @@ class DifficultyFragment : Fragment() {
 
     }
 }
+

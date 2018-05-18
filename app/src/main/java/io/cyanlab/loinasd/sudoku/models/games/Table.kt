@@ -1,7 +1,9 @@
 package io.cyanlab.loinasd.sudoku.models.games
 
+import java.io.Serializable
 
-open class Table{
+
+open class Table: Serializable{
 
     var rows: Array<BooleanArray> = emptyArray()
     var columns: Array<BooleanArray> = emptyArray()
