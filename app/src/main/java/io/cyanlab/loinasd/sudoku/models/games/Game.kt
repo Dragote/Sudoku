@@ -2,7 +2,6 @@ package io.cyanlab.loinasd.sudoku.models.games
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.os.Parcelable
 import io.cyanlab.loinasd.sudoku.R
 import java.io.Serializable
 
