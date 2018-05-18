@@ -114,6 +114,7 @@ class DifficultyFragment : Fragment() {
                         return
                     val data = Bundle()
                     data.putInt("Difficulty", difficulty)
+                    data.putSerializable("Game", game)
                     val f = GameFragment()
                     f.arguments = data
 

@@ -11,6 +11,7 @@ import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.*
 import io.cyanlab.loinasd.sudoku.view.TableController
+import kotlinx.android.synthetic.main.progress_bar.*
 import kotlinx.android.synthetic.main.working_r_view.*
 import kotlinx.android.synthetic.main.working_r_view.view.*
 import kotlin.concurrent.thread
@@ -21,10 +22,12 @@ class GameFragment : Fragment() {
     var generator: Thread? = null
     var difficulty = -1
     var controller: TableController? = null
+    var game: Game? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         difficulty = arguments.getInt("Difficulty")
+        game = arguments.getSerializable("Game") as Game
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -54,11 +57,24 @@ class GameFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        include.visibility = View.VISIBLE
+
         generator = thread {
 
             val time = System.currentTimeMillis()
 
-            val table = TableGenerator(GirandolaTable()).generateTable(difficulty)
+            val table: Table = when(game){
+
+                Game.ASTERISK -> AsteriskTable()
+                Game.CLASSIC -> Table()
+                Game.CENTER_DOTTED -> CenterDotTable()
+                Game.DIAGONAL -> DiagonalTable()
+                Game.GIRANDOLA -> GirandolaTable()
+                Game.WINDOKU -> WindokuTable()
+                else -> Table()
+            }
+
+            TableGenerator(table).generateTable(difficulty)
 
             println("Fully generated hard sudoku in ${System.currentTimeMillis() - time} m.s.")
 
@@ -71,6 +87,7 @@ class GameFragment : Fragment() {
 
                 controller?.getControlNumbers()
                 controller?.showTable()
+                include.visibility = View.GONE
             }
 
 

@@ -68,17 +68,14 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
         val params = GridLayout.LayoutParams()
 
-        val size = Point()
+        val size = parent.measuredWidth
 
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
-
-        val width = size.x/9 - margin * 2
+        val width = (size - margin * 4)/9 - margin * 2
 
         params.width = width
         params.height = width
-        params.setMargins(margin, margin, margin, margin)
 
-        colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default)
+        colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default_dark)//R.drawable.cell_default)
 
         colorSectors()
 
@@ -87,20 +84,30 @@ class TableController(val context: Context, val parent: android.support.v7.widge
             parent.removeAllViews()
         }
 
-        (parent.parent as View).divider_ver_2.layoutParams.height = size.x
+/*        (parent.parent as View).divider_ver_2.layoutParams.height = size.x
         (parent.parent as View).divider_ver_1.layoutParams.height = size.x
 
         (parent.parent as View).divider_ver_1.x = size.x / 3f - margin / 3f
         (parent.parent as View).divider_ver_2.x = 2 * size.x / 3f - margin/ 3f
 
         (parent.parent as View).divider_hor_1.y += size.x / 3f - margin / 3f
-        (parent.parent as View).divider_hor_2.y += 2 * size.x / 3f - margin /3f
+        (parent.parent as View).divider_hor_2.y += 2 * size.x / 3f - margin /3f*/
 
 
         for (number in 0 until cells.size){
             //cells[number].setOnClickListener(selector)
 
             val detector = GestureDetector(context, DoubleClickListener(cells[number]))
+
+            var marginTop = margin
+            var marginLeft = margin
+
+            if (y(number) == 3 || y(number) == 6)
+                marginTop += margin * 2
+            if (x(number) == 3 || x(number) == 6)
+                marginLeft += margin * 2
+
+            params.setMargins(marginLeft, marginTop, margin, margin)
 
             cells[number].setOnTouchListener { view, motionEvent ->
 
@@ -132,18 +139,21 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
     private fun colorSectors(){
 
-        val colors = arrayOf(
+        /*val colors = arrayOf(
                 context.resources?.getDrawable(R.color.MaterialDarkerCyan),
                 context.resources?.getDrawable(R.color.MaterialDarkerViolet),
                 context.resources?.getDrawable(R.color.MaterialDarkerYellow),
                 context.resources?.getDrawable(R.color.MaterialDarkerRed)
-        )
+        )*/
+
+        val back = context.resources.getDrawable(R.drawable.cell_default)
 
         for (sector in sectors){
 
             sector.cells.forEach {
 
-                it.defaultBackground = colors[sectors.indexOf(sector)]
+                it.defaultBackground = back
+                //colors[sectors.indexOf(sector)]
                 it.background = it.defaultBackground
             }
         }
@@ -153,14 +163,13 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
         val params = GridLayout.LayoutParams()
 
-        val size = Point()
+        val size = parent.measuredWidth
 
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
 
-        val width = size.x/6 - margin * 2 * 2
+        val width = size/9 - margin * 2 * 2
 
         params.width = width
-        params.height = width
+        params.height = width + 10
         params.setMargins(margin * 2, margin * 2, margin * 2, margin * 2)
 
         for (i in 1 until 10) {
@@ -312,6 +321,13 @@ class TableController(val context: Context, val parent: android.support.v7.widge
         override fun onDown(e: MotionEvent?): Boolean {
 
             if (!isCellHidden(cell)){
+
+                val index = cells.indexOf(cell)
+                val number = table.completeTable[y(index)][x(index)]
+                if (highlightedNumber != number)
+                    highlightNumber(highlightedNumber, false)
+
+                highlightNumber(number, true)
                 return true
             }
 
@@ -379,19 +395,21 @@ class TableController(val context: Context, val parent: android.support.v7.widge
 
             removePencil(cell)
 
-            /*var isFinished = true
+            var isFinished = true
 
-            for (i in table.penTable.indices) {
-                if (table.penTable[i].contains(false)) {
-                    isFinished = false
-                    break
+            for (y in table.penTable.indices) {
+                for (x in table.penTable[y].indices){
+                    if (table.completeTable[y][x] == highlightedNumber && table.penTable[y][x]) {
+                        isFinished = false
+                        break
+                    }
                 }
+
             }
 
             if (isFinished) {
-                context.congr_layout.visibility = View.VISIBLE
-                isComplete = true
-            }*/
+                control.getChildAt(highlightedNumber - 1).setOnClickListener(null)
+            }
         }
 
     }

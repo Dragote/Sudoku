@@ -5,12 +5,34 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </android.support.constraint.ConstraintLayout>
+
+    <include
+        android:id="@+id/include"
+        layout="@layout/progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:layout_editor_absoluteY="32dp" />
+
     <android.support.v7.widget.GridLayout
         android:id="@+id/control"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:layout_marginBottom="32dp"
-        app:columnCount="6"
+        app:columnCount="9"
         app:layout_constraintBottom_toBottomOf="parent">
 
     </android.support.v7.widget.GridLayout>
@@ -19,16 +41,17 @@
         android:id="@+id/main_grid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_margin="10dp"
+        android:layout_marginTop="20dp"
         android:animateLayoutChanges="true"
         app:columnCount="9"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
     </android.support.v7.widget.GridLayout>
 
-    <View
+    <!--<View
         android:id="@+id/divider_hor_1"
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -61,7 +84,7 @@
         android:background="@color/MaterialDarkerPaleBlue"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="@+id/main_grid"
-        tools:layout_editor_absoluteX="388dp" />
+        tools:layout_editor_absoluteX="388dp" />-->
 
     <!--    <RelativeLayout
             android:id="@+id/congr_layout"
