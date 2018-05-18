@@ -13,7 +13,7 @@ import io.cyanlab.loinasd.sudoku.models.Sector
 import io.cyanlab.loinasd.sudoku.models.games.Table
 import kotlinx.android.synthetic.main.working_r_view.view.*
 
-class TableController(val context: Context, val parent: android.support.v7.widget.GridLayout, val control: android.support.v7.widget.GridLayout, val table: Table) {
+class TableController(val context: Context, val parent: android.support.v7.widget.GridLayout, val control: ViewGroup, val table: Table) {
 
     private val margin = 8
 
@@ -64,16 +64,18 @@ class TableController(val context: Context, val parent: android.support.v7.widge
     fun y (number: Int) = number / 9
     fun x (number: Int) = number % 9
 
-    fun showTable() {
+    fun showTable(width: Int, margin: Int) {
 
-        val params = GridLayout.LayoutParams()
+        //val params = GridLayout.LayoutParams()
 
-        val size = parent.measuredWidth
+        //val size = parent.measuredWidth
 
-        val width = (size - margin * 4)/9 - margin * 2
+        //val width = (size - margin * 4)/9 - margin * 2
 
-        params.width = width
-        params.height = width
+        /*params.width = width
+        params.height = width*/
+
+        val params = ViewGroup.MarginLayoutParams(width, width)
 
         colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default_dark)//R.drawable.cell_default)
 
@@ -159,17 +161,15 @@ class TableController(val context: Context, val parent: android.support.v7.widge
         }
     }
 
-    fun getControlNumbers(){
+    fun getControlNumbers(width: Int, margin: Int){
 
-        val params = GridLayout.LayoutParams()
-
-        val size = parent.measuredWidth
+        //val size = parent.measuredWidth
 
 
-        val width = size/9 - margin * 2 * 2
+        //val width = size/9 - margin * 2 * 2
 
-        params.width = width
-        params.height = width + 10
+        val params = ViewGroup.MarginLayoutParams(width, width + 10)
+
         params.setMargins(margin * 2, margin * 2, margin * 2, margin * 2)
 
         for (i in 1 until 10) {
