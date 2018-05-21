@@ -39,7 +39,7 @@ class SudokuController(override val context: Context, override val parent: andro
         }))
     })
 
-    private val numbersController = NumbersController(this)
+    private val numbersSelector = NumbersSelector(this)
 
     override fun showTable(width: Int, margin: Int) {
 
@@ -105,7 +105,7 @@ class SudokuController(override val context: Context, override val parent: andro
             controlNum.textSize = 24f
 
             controlNum.gravity = Gravity.CENTER
-            controlNum.setOnClickListener(numbersController)
+            controlNum.setOnClickListener(numbersSelector)
 
             controlNum.background = context.resources.getDrawable(R.drawable.cell_default_dark)
 
@@ -121,7 +121,7 @@ class SudokuController(override val context: Context, override val parent: andro
         edit.background = context.resources.getDrawable(R.drawable.cell_selected)
 
 
-        edit.setOnClickListener(numbersController)
+        edit.setOnClickListener(numbersSelector)
 
         control.addView(edit, params)
 
