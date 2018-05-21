@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 
-class NumbersController(controller: TableController): View.OnClickListener, TableController by controller{
+class NumbersSelector(controller: TableController): View.OnClickListener, TableController by controller{
 
     override fun onClick(p0: View?) {
 

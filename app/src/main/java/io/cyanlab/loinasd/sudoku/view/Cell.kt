@@ -6,8 +6,9 @@ import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.support.v7.widget.AppCompatTextView
 import io.cyanlab.loinasd.sudoku.controller.SudokuController
+import io.cyanlab.loinasd.sudoku.controller.TableController
 
-class Cell(val controller: SudokuController) : AppCompatTextView(controller.context){
+class Cell(val controller: TableController) : AppCompatTextView(controller.context){
 
     var defaultBackground: Drawable? = null
 
