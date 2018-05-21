@@ -90,7 +90,7 @@ class GameFragment : Fragment() {
 
         if (isRecent && table != null){
 
-            onTableLoaded(table, view!!)
+            onTableLoaded(table, view)
             return
         }
 
@@ -118,7 +118,7 @@ class GameFragment : Fragment() {
 
             activity.runOnUiThread {
 
-                onTableLoaded(table, view!!)
+                onTableLoaded(table, view)
             }
         }
     }
@@ -136,9 +136,9 @@ class GameFragment : Fragment() {
         val margin = 8
 
         val cellWidth = (size.x - margin * 4 - 50)/9 - margin * 2
-        val numberWidth = (size.x - 50)/9 - margin * 2 * 2
+        val numberWidth = (size.x )/9 - 0 * 2 * 2
 
-        controller?.getControlNumbers(numberWidth, margin)
+        controller?.getControlNumbers(numberWidth, 0)
         controller?.showTable(cellWidth, margin)
 
 

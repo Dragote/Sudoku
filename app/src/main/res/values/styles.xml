@@ -3,6 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:background">@color/MaterialDarkerBackground</item>
+
+    </style>
+
+    <style name="AppTheme.Dark" parent="AppTheme">
+        <item name="background">@color/MaterialDarkerBackground</item>
     </style>
 
 </resources>
