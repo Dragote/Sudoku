@@ -3,7 +3,6 @@ package io.cyanlab.loinasd.sudoku.activities
 import android.content.pm.ActivityInfo
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.app.AppCompatDelegate
 import android.view.Window
 import io.cyanlab.loinasd.sudoku.R
 
