@@ -31,13 +31,18 @@ class MainMenuFragment : Fragment() {
         @SuppressLint("ResourceType")
         override fun onClick(p0: View?) {
             if (p0 == null) return
-            val transaction = fragmentManager.beginTransaction()
-            when(p0){
-                startGame -> transaction.replace(R.id.fragment, DifficultyFragment()).addToBackStack("my").commitAllowingStateLoss()
-                stat -> transaction.replace(R.id.fragment, StatFragment()).addToBackStack("my").commitAllowingStateLoss()
-                settings -> transaction.replace(R.id.fragment, PrefFragment()).addToBackStack("my").commitAllowingStateLoss()
-                about -> transaction.replace(R.id.fragment, AboutFragment()).addToBackStack("my").commitAllowingStateLoss()
+
+            val transaction = fragmentManager?.beginTransaction()
+
+            val fragment = when (p0){
+
+                startGame -> DifficultyFragment()
+                stat -> StatFragment()
+                settings -> PrefFragment()
+                about -> AboutFragment()
+                else -> StatFragment()
             }
+            transaction?.replace(R.id.fragment, fragment)?.addToBackStack("my")?.commitAllowingStateLoss()
 
 
 

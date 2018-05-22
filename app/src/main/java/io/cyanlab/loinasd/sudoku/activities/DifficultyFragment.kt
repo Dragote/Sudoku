@@ -62,7 +62,7 @@ class DifficultyFragment : Fragment() {
             node.name.text = g.getGameName()
             node.name.setBackgroundColor(0x00000000)
             node.check.setBackgroundColor(0x00000000)
-            node.img.setImageDrawable(g.getDrawable(context))
+            node.img.setImageDrawable(g.getDrawable(context!!))
             node.img.setBackgroundColor(0x00000000)
 
             node.setOnClickListener(gameTypeSelector)
@@ -74,8 +74,8 @@ class DifficultyFragment : Fragment() {
         v.startNewGame.setOnClickListener(startGameListener)
         v.resumeGame.setOnClickListener(startGameListener)
 
-        val prefs = context.getSharedPreferences(PREFS_KEY_RECENT_GAME, Activity.MODE_PRIVATE)
-        isRecent = prefs.getBoolean(GameFragment.PREFS_IS_RECENT, false)
+        val prefs = context?.getSharedPreferences(PREFS_KEY_RECENT_GAME, Activity.MODE_PRIVATE)
+        isRecent = prefs?.getBoolean(GameFragment.PREFS_IS_RECENT, false) == true
         if (isRecent)
             v.resumeGame.isEnabled = true
 
@@ -143,7 +143,7 @@ class DifficultyFragment : Fragment() {
             val f = GameFragment()
             f.arguments = data
 
-            fragmentManager.beginTransaction().replace(R.id.fragment, f).commit()
+            fragmentManager?.beginTransaction()?.replace(R.id.fragment, f)?.commit()
 
         }
 

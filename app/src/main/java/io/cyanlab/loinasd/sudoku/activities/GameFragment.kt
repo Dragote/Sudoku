@@ -14,6 +14,7 @@ import android.view.WindowManager
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.*
 import io.cyanlab.loinasd.sudoku.controller.SudokuController
+import io.cyanlab.loinasd.sudoku.models.Sudoku
 import kotlinx.android.synthetic.main.m_difficulty.view.*
 import kotlinx.android.synthetic.main.working_r_view.*
 import kotlinx.android.synthetic.main.working_r_view.view.*
@@ -39,13 +40,14 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (!arguments.getBoolean(DifficultyFragment.KEY_STRING_RECENT_GAME)){
-
-            difficulty = arguments.getInt("Difficulty")
-
-            game = arguments.getSerializable("Game") as Game
+        if (arguments?.getBoolean(DifficultyFragment.KEY_STRING_RECENT_GAME) != true){
 
             isRecent = false
+
+            difficulty = arguments?.getInt("Difficulty") ?: return
+
+            game = arguments?.getSerializable("Game") as Game
+
             return
         }
 
@@ -60,7 +62,7 @@ class GameFragment : Fragment() {
         return v
     }
 
-    override fun onViewCreated(view: View?, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         loadTable(view)
@@ -68,10 +70,11 @@ class GameFragment : Fragment() {
 
 
     fun loadTable(view: View?){
+
         if (view == null)
             return
 
-        view?.include?.visibility = View.VISIBLE
+        view.include?.visibility = View.VISIBLE
 
         var table: Table? = null
 
@@ -116,7 +119,7 @@ class GameFragment : Fragment() {
 
             generator = null
 
-            activity.runOnUiThread {
+            activity?.runOnUiThread {
 
                 onTableLoaded(table, view)
             }
@@ -125,12 +128,11 @@ class GameFragment : Fragment() {
 
     fun onTableLoaded(table: Table, view: View){
 
-
-        controller = SudokuController(context, view.main_grid, view.control, null, table)
+        controller = SudokuController(context!!, view.main_grid, view.control, null, Sudoku(table, null, null))
 
         val size = Point()
 
-        (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
+        (context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
 
         //val width = view.main_grid.layoutParams.width
         val margin = 8
@@ -149,9 +151,9 @@ class GameFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        context.getSharedPreferences(DifficultyFragment.PREFS_KEY_RECENT_GAME, Activity.MODE_PRIVATE).edit().putBoolean(PREFS_IS_RECENT, true).apply()
+        context?.getSharedPreferences(DifficultyFragment.PREFS_KEY_RECENT_GAME, Activity.MODE_PRIVATE)?.edit()?.putBoolean(PREFS_IS_RECENT, true)?.apply()
 
-        val output = ObjectOutputStream(BufferedOutputStream(FileOutputStream("${context.filesDir}/$RECENT_GAME_FILE_NAME")))
+        val output = ObjectOutputStream(BufferedOutputStream(FileOutputStream("${context?.filesDir}/$RECENT_GAME_FILE_NAME")))
 
         output.writeObject(controller?.table)
 
