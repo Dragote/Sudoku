@@ -1,7 +1,6 @@
 package io.cyanlab.loinasd.sudoku.controller
 
 import android.view.View
-import android.view.ViewGroup
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 
@@ -11,20 +10,23 @@ class NumbersSelector(controller: TableController): View.OnClickListener, TableC
 
         val num = control.indexOfChild(p0) + 1
 
-        if (num > 9) {
+        if (num > 9 || p0 == pencil) {
 
             onEdit(p0!!)
             return
         }
 
-        if (p0 !is TextView)
+        if (!isNumberSelected) {
+
+            selectNumber(num, true)
             return
+        }
 
-        if (num != highlightedNumber)
+        selectNumber(selectedNumber, false)
 
-            highlightNumber(highlightedNumber, false)
+        if (num != selectedNumber)
 
-        highlightNumber(num, true)
+            selectNumber(num, true)
 
     }
 
@@ -32,7 +34,13 @@ class NumbersSelector(controller: TableController): View.OnClickListener, TableC
 
         isPencil = !isPencil
 
-        edit.background = context.resources.getDrawable(if (!isPencil) R.drawable.cell_default_dark else R.drawable.cell_selected)
+        edit.background = context.resources.getDrawable(
+                if (!isPencil)
+
+                    R.drawable.cell_default_dark
+                else
+                    R.drawable.cell_selected
+        )
     }
 
 }

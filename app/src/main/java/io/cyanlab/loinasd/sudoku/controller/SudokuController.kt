@@ -1,14 +1,18 @@
 package io.cyanlab.loinasd.sudoku.controller
 import android.content.Context
 import android.view.*
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.view.Cell
 import io.cyanlab.loinasd.sudoku.models.Sector
+import io.cyanlab.loinasd.sudoku.models.Sudoku
 import io.cyanlab.loinasd.sudoku.models.games.Table
 
-class SudokuController(override val context: Context, override val parent: android.support.v7.widget.GridLayout, override val control: ViewGroup, val pencil: View?, override val table: Table): TableController{
+class SudokuController(override val context: Context, override val parent: android.support.v7.widget.GridLayout, override val control: ViewGroup, override val pencil: View?, val sudoku: Sudoku): TableController{
+
+    override val table = sudoku.table
 
     override val cells: Array<Cell> = Array(81, { number ->
 
@@ -39,7 +43,7 @@ class SudokuController(override val context: Context, override val parent: andro
         }))
     })
 
-    private val numbersSelector = NumbersSelector(this)
+    override val numbersSelector = NumbersSelector(this)
 
     override fun showTable(width: Int, margin: Int) {
 
@@ -87,8 +91,8 @@ class SudokuController(override val context: Context, override val parent: andro
             parent.addView(cells[number], params)
         }
 
-        highlightedNumber = 1
-        highlightNumber(highlightedNumber, true)
+        selectedNumber = 1
+        selectNumber(selectedNumber, true)
 
     }
 
@@ -99,7 +103,7 @@ class SudokuController(override val context: Context, override val parent: andro
         params.setMargins(margin * 2, margin * 2, margin * 2, margin * 2)
 
         for (i in 1 until 10) {
-            val controlNum = TextView(context)
+            val controlNum = Button(context)
 
             controlNum.text = "$i"
             controlNum.textSize = 24f
@@ -114,12 +118,17 @@ class SudokuController(override val context: Context, override val parent: andro
 
         println(context)
 
+        if (pencil != null){
+
+            pencil.setOnClickListener(numbersSelector)
+            return
+        }
+
         val edit = ImageView(context)
 
         edit.setImageDrawable(context.resources?.getDrawable(R.drawable.ic_edit_black))
 
         edit.background = context.resources.getDrawable(R.drawable.cell_selected)
-
 
         edit.setOnClickListener(numbersSelector)
 
@@ -127,7 +136,8 @@ class SudokuController(override val context: Context, override val parent: andro
 
     }
 
-    override var highlightedNumber: Int = 1
+    override var selectedNumber: Int = 1
+    override var isNumberSelected = true
 
     override var isPencil = true
 
