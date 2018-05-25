@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<io.cyanlab.loinasd.sudoku.models.Cell xmlns:android="http://schemas.android.com/apk/res/android"
+<io.cyanlab.loinasd.sudoku.view.Cell xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:autoSizeTextType="uniform">
 
-</io.cyanlab.loinasd.sudoku.models.Cell>
+</io.cyanlab.loinasd.sudoku.view.Cell>

@@ -15,6 +15,7 @@ import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.models.games.*
 import io.cyanlab.loinasd.sudoku.controller.SudokuController
 import io.cyanlab.loinasd.sudoku.models.Sudoku
+import kotlinx.android.synthetic.main.control.view.*
 import kotlinx.android.synthetic.main.m_difficulty.view.*
 import kotlinx.android.synthetic.main.working_r_view.*
 import kotlinx.android.synthetic.main.working_r_view.view.*
@@ -59,6 +60,10 @@ class GameFragment : Fragment() {
                               savedInstanceState: Bundle?): View?{
         val v = inflater.inflate(R.layout.working_r_view, container, false)
 
+        if (game != null){
+
+            v.game_name.text = game?.getGameName()?.capitalize()
+        }
         return v
     }
 
@@ -71,45 +76,50 @@ class GameFragment : Fragment() {
 
     fun loadTable(view: View?){
 
-        if (view == null)
-            return
-
-        view.include?.visibility = View.VISIBLE
-
-        var table: Table? = null
-
-        if (isRecent) {
-
-            val input = ObjectInputStream(BufferedInputStream(FileInputStream("${context?.filesDir?.absolutePath}/$RECENT_GAME_FILE_NAME")))
-
-            table = try {
-                input.readObject() as Table
-            }catch (e: IOException){
-                null
-            }
-
-
-        }
-
-        if (isRecent && table != null){
-
-            onTableLoaded(table, view)
-            return
-        }
-
-        table = when(game){
-
-            Game.ASTERISK -> AsteriskTable()
-            Game.CLASSIC -> Table()
-            Game.CENTER_DOTTED -> CenterDotTable()
-            Game.DIAGONAL -> DiagonalTable()
-            Game.GIRANDOLA -> GirandolaTable()
-            Game.WINDOKU -> WindokuTable()
-            else -> Table()
-        }
-
 
         generator = thread {
+
+            if (view == null)
+                return@thread
+
+            view.include?.visibility = View.VISIBLE
+
+            var table: Table? = null
+
+            if (isRecent) {
+
+                val input = ObjectInputStream(BufferedInputStream(FileInputStream("${context?.filesDir?.absolutePath}/$RECENT_GAME_FILE_NAME")))
+
+                table = try {
+                    input.readObject() as Table
+                }catch (e: Exception){
+                    null
+                }
+
+
+            }
+
+            if (isRecent && table != null){
+
+
+                generator = null
+
+                activity?.runOnUiThread{
+                    onTableLoaded(table!!)
+                }
+                return@thread
+            }
+
+            table = when(game){
+
+                Game.ASTERISK -> AsteriskTable()
+                Game.CLASSIC -> Table()
+                Game.CENTER_DOTTED -> CenterDotTable()
+                Game.DIAGONAL -> DiagonalTable()
+                Game.GIRANDOLA -> GirandolaTable()
+                Game.WINDOKU -> WindokuTable()
+                else -> Table()
+            }
 
             val time = System.currentTimeMillis()
 
@@ -120,31 +130,37 @@ class GameFragment : Fragment() {
             generator = null
 
             activity?.runOnUiThread {
-
-                onTableLoaded(table, view)
+                onTableLoaded(table)
             }
         }
     }
 
-    fun onTableLoaded(table: Table, view: View){
+    var layoutListener: View.OnLayoutChangeListener? = null
 
-        controller = SudokuController(context!!, view.main_grid, view.control, null, Sudoku(table, null, null))
+    fun onTableLoaded(table: Table){
 
-        val size = Point()
+        controller = SudokuController(context!!, view?.main_grid!!, view?.control!! as ViewGroup, view?.pencil, Sudoku(table, null, null))
 
-        (context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
+        //val size = Point()
+
+        val size = view?.main_grid?.measuredHeight
+
+        if (size == null)
+            return
+
+        //(context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.getSize(size)
 
         //val width = view.main_grid.layoutParams.width
         val margin = 8
 
-        val cellWidth = (size.x - margin * 4 - 50)/9 - margin * 2
-        val numberWidth = (size.x )/9 - 0 * 2 * 2
+        val cellWidth = (size - margin * 4)/9 - margin * 2
+        val numberWidth = (size )/9 - 0 * 2 * 2
 
-        controller?.getControlNumbers(numberWidth, 0)
+        controller?.getControlNumbers(numberWidth, margin)
         controller?.showTable(cellWidth, margin)
 
 
-        view.include.visibility = View.GONE
+        view?.include?.visibility = View.GONE
     }
 
 

@@ -1,6 +1,7 @@
 package io.cyanlab.loinasd.sudoku.controller
 
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 
@@ -8,7 +9,7 @@ class NumbersSelector(controller: TableController): View.OnClickListener, TableC
 
     override fun onClick(p0: View?) {
 
-        val num = control.indexOfChild(p0) + 1
+        val num = controls.indexOf(p0) + 1
 
         if (num > 9 || p0 == pencil) {
 
@@ -37,10 +38,21 @@ class NumbersSelector(controller: TableController): View.OnClickListener, TableC
         edit.background = context.resources.getDrawable(
                 if (!isPencil)
 
-                    R.drawable.cell_default_dark
+                    R.drawable.pencil_default
                 else
-                    R.drawable.cell_selected
+                {
+                    R.drawable.pencil_selected
+                }
         )
+
+        (edit as ImageView).setImageDrawable(context.resources.getDrawable(
+                if (!isPencil){
+                    R.drawable.ic_edit_accent
+                }else
+                {
+                    R.drawable.ic_edit_background
+                }
+        ))
     }
 
 }

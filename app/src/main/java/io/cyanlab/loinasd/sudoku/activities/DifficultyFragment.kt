@@ -143,7 +143,12 @@ class DifficultyFragment : Fragment() {
             val f = GameFragment()
             f.arguments = data
 
-            fragmentManager?.beginTransaction()?.replace(R.id.fragment, f)?.commit()
+            val prev = fragmentManager?.findFragmentByTag("game")
+            if (prev != null){
+                fragmentManager?.beginTransaction()?.remove(prev)?.commitAllowingStateLoss()
+            }
+
+            fragmentManager?.beginTransaction()?.replace(R.id.fragment, f, "game")?.commit()
 
         }
 

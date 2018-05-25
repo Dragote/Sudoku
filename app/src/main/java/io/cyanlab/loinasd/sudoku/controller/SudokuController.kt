@@ -1,14 +1,12 @@
 package io.cyanlab.loinasd.sudoku.controller
 import android.content.Context
 import android.view.*
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.view.Cell
 import io.cyanlab.loinasd.sudoku.models.Sector
 import io.cyanlab.loinasd.sudoku.models.Sudoku
-import io.cyanlab.loinasd.sudoku.models.games.Table
+import kotlinx.android.synthetic.main.control.view.*
 
 class SudokuController(override val context: Context, override val parent: android.support.v7.widget.GridLayout, override val control: ViewGroup, override val pencil: View?, val sudoku: Sudoku): TableController{
 
@@ -26,7 +24,7 @@ class SudokuController(override val context: Context, override val parent: andro
         else
             ""
 
-        cell.textSize = 18f
+        cell.textSize = 22f
 
         cell.gravity = Gravity.CENTER
 
@@ -49,7 +47,7 @@ class SudokuController(override val context: Context, override val parent: andro
 
         val params = ViewGroup.MarginLayoutParams(width, width)
 
-        colorSquares(R.drawable.cell_default_dark, R.drawable.cell_default_dark)//R.drawable.cell_default)
+        colorSquares(R.drawable.cell_default, R.drawable.cell_default)//R.drawable.cell_default)
 
         colorSectors()
 
@@ -81,6 +79,7 @@ class SudokuController(override val context: Context, override val parent: andro
             if (x(number) == 3 || x(number) == 6)
                 marginLeft += margin * 2
 
+
             params.setMargins(marginLeft, marginTop, margin, margin)
 
             cells[number].setOnTouchListener { _, motionEvent ->
@@ -88,32 +87,57 @@ class SudokuController(override val context: Context, override val parent: andro
                 detector.onTouchEvent(motionEvent)
             }
 
+            cells[number].setTextColor(context.resources.getColor(R.color.background))
+            cells[number].defaultTextColor = context.resources.getColor(R.color.background)
+
+
             parent.addView(cells[number], params)
         }
 
         selectedNumber = 1
         selectNumber(selectedNumber, true)
 
+        parent.refreshDrawableState()
+
     }
+
+    override val controls = Array<View>(9, {i: Int ->
+        when (i){
+            0 -> control.num1
+            1 -> control.num2
+            2 -> control.num3
+            3 -> control.num4
+            4 -> control.num5
+            5 -> control.num6
+            6 -> control.num7
+            7 -> control.num8
+            8 -> control.num9
+            else -> control.num1
+        }
+    })
 
     override fun getControlNumbers(width: Int, margin: Int){
 
-        val params = ViewGroup.MarginLayoutParams(width, width + 10)
+        val params = ViewGroup.MarginLayoutParams(width, width)
 
         params.setMargins(margin * 2, margin * 2, margin * 2, margin * 2)
 
         for (i in 1 until 10) {
-            val controlNum = Button(context)
+            //val controlNum = control.getChildAt(i - 1)
 
-            controlNum.text = "$i"
-            controlNum.textSize = 24f
+            /*controlNum.setTextColor(context.resources.getColor(R.color.cell))
 
             controlNum.gravity = Gravity.CENTER
-            controlNum.setOnClickListener(numbersSelector)
 
-            controlNum.background = context.resources.getDrawable(R.drawable.cell_default_dark)
+
+            controlNum.background = context.resources.getDrawable(R.drawable.number_default)
 
             control.addView(controlNum, params)
+            controlNum.text = "$i"
+            controlNum.textSize = 26f*/
+
+            //controlNum.setPadding(0,0,0,0)
+            controls[i - 1].setOnClickListener(numbersSelector)
         }
 
         println(context)
@@ -126,13 +150,13 @@ class SudokuController(override val context: Context, override val parent: andro
 
         val edit = ImageView(context)
 
-        edit.setImageDrawable(context.resources?.getDrawable(R.drawable.ic_edit_black))
+        edit.setImageDrawable(context.resources?.getDrawable(R.drawable.ic_edit_accent))
 
         edit.background = context.resources.getDrawable(R.drawable.cell_selected)
 
         edit.setOnClickListener(numbersSelector)
 
-        control.addView(edit, params)
+        //control.addView(edit, params)
 
     }
 

@@ -8,6 +8,7 @@ import android.os.Vibrator
 import android.support.annotation.DrawableRes
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import io.cyanlab.loinasd.sudoku.R
 import io.cyanlab.loinasd.sudoku.view.Cell
 
@@ -26,6 +27,8 @@ interface TableController: CellsHolder{
     fun showTable(width: Int, margin: Int)
 
     fun getControlNumbers(width: Int, margin: Int)
+
+    val controls: Array<View>
 
 
     fun colorSquares(@DrawableRes res1: Int, @DrawableRes res2: Int){
@@ -52,7 +55,7 @@ interface TableController: CellsHolder{
                 context.resources?.getDrawable(R.color.MaterialDarkerRed)
         )*/
 
-        val back = context.resources.getDrawable(R.drawable.cell_default)
+        val back = context.resources.getDrawable(R.drawable.cell_default_dark)
 
         for (sector in sectors){
 
@@ -91,11 +94,20 @@ interface TableController: CellsHolder{
 
         val res =
                 if (!isSelected)
-                    R.drawable.cell_default_dark
-                else
-                    R.drawable.cell_selected
+                    R.drawable.number_default
+                else{
 
-        control.getChildAt(selectedNumber - 1)?.background = context.resources?.getDrawable(res)
+                    R.drawable.number_selected
+                }
+
+        val color =
+                if (!isSelected)
+                    R.color.cell
+                else
+                    R.color.background
+
+        controls[selectedNumber - 1].background = context.resources?.getDrawable(res)
+        (controls[selectedNumber - 1] as TextView).setTextColor(context.resources.getColor(color))
 
     }
 
@@ -162,7 +174,7 @@ interface TableController: CellsHolder{
         }
 
         if (isFinished) {
-            control.getChildAt(selectedNumber - 1).setOnClickListener(null)
+            controls[selectedNumber - 1].setOnClickListener(null)
         }
     }
 

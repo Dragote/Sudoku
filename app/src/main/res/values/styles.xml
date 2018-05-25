@@ -2,12 +2,19 @@
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:background">@color/MaterialDarkerBackground</item>
+        <item name="android:background">@color/background</item>
 
     </style>
 
     <style name="AppTheme.Dark" parent="AppTheme">
-        <item name="background">@color/MaterialDarkerBackground</item>
+        <item name="background">@color/background</item>
+    </style>
+    
+    <style name="AppTheme.Text" parent="Base.Widget.AppCompat.Button">
+    </style>
+
+    <style name="AppTheme.NumberText">
+        <item name="android:textColor">@color/cell</item>
     </style>
 
 </resources>

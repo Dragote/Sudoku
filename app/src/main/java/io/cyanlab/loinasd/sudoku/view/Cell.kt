@@ -11,6 +11,7 @@ import io.cyanlab.loinasd.sudoku.controller.TableController
 class Cell(val controller: TableController) : AppCompatTextView(controller.context){
 
     var defaultBackground: Drawable? = null
+    var defaultTextColor: Int? = null
 
     override fun onDraw(canvas: Canvas?) {
 
@@ -40,7 +41,7 @@ class Cell(val controller: TableController) : AppCompatTextView(controller.conte
 
                 val paint = Paint()
                 paint.textSize = textWidth * 1.7f
-                paint.color = if (!possibles[number - 1]) textColors.defaultColor else Color.RED
+                paint.color = if (!possibles[number - 1] && defaultTextColor != null) defaultTextColor!! else Color.RED
                 paint.typeface = typeface
 
                 canvas.drawText("$number", x, y, paint)
