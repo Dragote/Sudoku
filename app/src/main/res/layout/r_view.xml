@@ -2,17 +2,16 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/parent_lay"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/head"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_height="78dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -20,35 +19,45 @@
             android:id="@+id/score"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="12345"
-            android:textColor="@color/MaterialYellow"
-            android:textSize="20dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/back"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView10"
-            android:layout_width="53dp"
-            android:layout_height="13dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:text="WINDOKU"
-            android:textSize="10dp"
+            android:text="100500"
+            android:textAlignment="center"
+            android:textColor="@color/colorAccent"
+            android:textSize="35sp"
+            app:layout_constraintBottom_toTopOf="@+id/game_name"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/score" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
+
+        <TextView
+            android:id="@+id/game_name"
+            android:layout_width="113dp"
+            android:layout_height="18dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="WINDOKU"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="@color/cell"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/back"
             android:layout_width="43dp"
             android:layout_height="43dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/game_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_chevron_left_black_36dp" />
@@ -59,8 +68,11 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@null"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/game_name"
             app:srcCompat="@drawable/ic_lightbulb" />
 
         <ImageButton
@@ -68,7 +80,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="32dp"
+            android:background="@color/MaterialBackground"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:srcCompat="@drawable/ic_undo" />
@@ -78,11 +91,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
+            android:background="@null"
+            android:src="@drawable/ic_redo"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/undo"
-            app:srcCompat="@drawable/ic_redo" />
+            app:layout_constraintEnd_toStartOf="@+id/game_name"
+            app:layout_constraintStart_toEndOf="@+id/undo" />
     </android.support.constraint.ConstraintLayout>
+
+    <!--<android.support.v7.widget.GridLayout
+        android:id="@+id/control"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="32dp"
+        app:columnCount="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.088"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </android.support.v7.widget.GridLayout>-->
+
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/main_grid"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:columnCount="9"
+        app:layout_constraintBottom_toTopOf="@+id/time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/head">
+
+    </android.support.v7.widget.GridLayout>
+
+    <include
+        layout="@layout/control"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="14 : 41"
+        android:textColor="@color/cell"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/control"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <include
         android:id="@+id/include"
@@ -92,29 +157,56 @@
         android:visibility="gone"
         tools:layout_editor_absoluteY="32dp" />
 
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/control"
+    <!--<View
+        android:id="@+id/divider_hor_1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginBottom="32dp"
-        app:columnCount="9"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="2dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid" />
 
-    </android.support.v7.widget.GridLayout>
+    <View
+        android:id="@+id/divider_ver_1"
+        android:layout_width="2dp"
+        android:layout_height="250dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="180dp" />
 
-    <android.support.v7.widget.GridLayout
-        android:id="@+id/main_grid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_marginTop="20dp"
-        android:animateLayoutChanges="true"
-        app:columnCount="9"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/head">
+    <View
+        android:id="@+id/divider_ver_2"
+        android:layout_width="2dp"
+        android:layout_height="250dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="386dp" />
 
-    </android.support.v7.widget.GridLayout>
+    <View
+        android:id="@+id/divider_hor_2"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/MaterialDarkerPaleBlue"
+        android:visibility="visible"
+        app:layout_constraintTop_toTopOf="@+id/main_grid"
+        tools:layout_editor_absoluteX="388dp" />-->
+
+    <!--    <RelativeLayout
+            android:id="@+id/congr_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/WhiteLowAlpha"
+            android:visibility="gone"
+            tools:layout_editor_absoluteY="56dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Congratulations!"
+                android:textColor="@color/MaterialDarkerGreen"
+                android:textSize="30sp" />
+        </RelativeLayout>-->
 
 </android.support.constraint.ConstraintLayout>

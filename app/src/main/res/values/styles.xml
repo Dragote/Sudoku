@@ -17,4 +17,8 @@
         <item name="android:textColor">@color/cell</item>
     </style>
 
+    <style name="AppTheme.Button" parent="Widget.AppCompat.Button.Borderless">
+
+    </style>
+
 </resources>

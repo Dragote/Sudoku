@@ -48,12 +48,6 @@ interface TableController: CellsHolder{
 
     fun colorSectors(){
 
-        /*val colors = arrayOf(
-                context.resources?.getDrawable(R.color.MaterialDarkerCyan),
-                context.resources?.getDrawable(R.color.MaterialDarkerViolet),
-                context.resources?.getDrawable(R.color.MaterialDarkerYellow),
-                context.resources?.getDrawable(R.color.MaterialDarkerRed)
-        )*/
 
         val back = context.resources.getDrawable(R.drawable.cell_default_dark)
 
